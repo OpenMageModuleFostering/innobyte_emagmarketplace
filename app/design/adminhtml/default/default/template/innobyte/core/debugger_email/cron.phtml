@@ -1,0 +1,49 @@
+
+<?php $_magento = $this->getMagento(); ?>
+<?php if (isset($_magento['crontab'])) : ?>
+    <?php foreach ($_magento['crontab'] as $_code=>$_info): ?>
+        <li style="list-style:none inside; padding:0 0 0 10px; margin-top: 15px;">
+            <div style="display:block; overflow: hidden;">
+                <?php echo $_info; ?><br/>
+            </div>
+        </li>
+    <?php endforeach; ?>
+<?php endif; ?>
+        
+<hr/>        
+        
+        
+        
+<?php if (isset($_magento['crons'])) : ?>
+<ul style="font-size:12px; line-height:16px; margin:0 0 16px 0; padding:0;">
+    <?php foreach ($_magento['crons'] as $_code=>$_info): ?>
+        <li style="list-style:none inside; padding:0 0 0 10px; margin-top: 15px;">
+            <div style="display:block; overflow: hidden;">
+                <div style="width:38%;float:left;">
+                    <strong><?php echo $_code; ?></strong><br/>
+                    &nbsp; <?php echo $_info['info']['cron_expr']; ?></br>
+                    <?php echo $_info['info']['model']; ?>
+                </div>
+                <div style="width:12%;float:left;">
+                    <?php if (isset($_info['schedule'])) : ?>
+                        <?php echo $_info['schedule']['status']; ?>
+                    <?php endif; ?>
+                
+                </div>
+                <div style="width:50%;float:left;font-family:monospace;">
+                    <?php if (isset($_info['schedule'])) : ?>
+                        messages&nbsp;&nbsp;&nbsp;&nbsp;: <?php echo $_info['schedule']['messages']; ?><br/>
+                        created_at&nbsp;&nbsp;: <?php echo $_info['schedule']['created_at']; ?><br/>
+                        scheduled_at: <?php echo $_info['schedule']['scheduled_at']; ?><br/>
+                        executed_at&nbsp;: <?php echo $_info['schedule']['executed_at']; ?><br/>
+                        finished_at&nbsp;: <?php echo $_info['schedule']['finished_at']; ?><br/>
+                    <?php endif; ?>
+                </div>
+                
+            </div>
+        </li>
+    <?php endforeach; ?>
+</ul>
+<?php else: ?>
+--- No cron jobs found
+<?php endif; ?>

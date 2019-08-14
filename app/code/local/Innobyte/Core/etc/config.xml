@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Innobyte_Core>
+            <version>0.0.1</version>
+        </Innobyte_Core>
+    </modules>
+    <global>
+        <models>
+            <innobyte_core>
+                <class>Innobyte_Core_Model</class>
+            </innobyte_core>
+        </models>
+        <helpers>
+            <innobyte_core>
+                <class>Innobyte_Core_Helper</class>
+            </innobyte_core>
+        </helpers>
+        <blocks>
+            <innobyte_core>
+                <class>Innobyte_Core_Block</class>
+            </innobyte_core>
+        </blocks>
+        <template>
+            <email>
+                <innobyte_core_debugger_email_template translate="label" module="innobyte_core">
+                    <label>Innobyte Core - Debug</label>
+                    <file>innobyte/core/debug.html</file>
+                    <type>html</type>
+                </innobyte_core_debugger_email_template>
+            </email>
+        </template>
+    </global>
+    <default>
+        <innobyte_core>
+            <adminnotification>
+                <url>www.innobyte.com/category/magento/feed/</url>
+                <use_https>0</use_https>
+                <frequency>86400</frequency>
+                <enabled>1</enabled>
+                <feeds>info,promo,update,release</feeds>
+            </adminnotification>
+            <debugger>
+                <email>shop@innobyte.com</email>
+                <explanation_message>No message</explanation_message>
+            </debugger>
+        </innobyte_core>
+    </default>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <innobyte_core after="Mage_Adminhtml">Innobyte_Core</innobyte_core>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <layout>
+            <updates>
+                <innobyte_core module="Innobyte_Core">
+                    <file>innobyte/core.xml</file>
+                </innobyte_core>
+            </updates>
+        </layout>
+
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <innobyte_core>
+                                            <title>Innobyte - All</title>
+                                        </innobyte_core>
+                                        <innobyte_shop>
+                                            <title>Innobyte - Shop</title>
+                                        </innobyte_shop>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <events>
+            <controller_action_predispatch>
+                <observers>
+                    <innobyte_core_feed>
+                        <type>singleton</type>
+                        <class>innobyte_core/feed</class>
+                        <method>news</method>
+                    </innobyte_core_feed>
+                    <innobyte_core_updates>
+                        <type>singleton</type>
+                        <class>innobyte_core/feed</class>
+                        <method>checkUpdates</method>
+                    </innobyte_core_updates>
+                    <innobyte_core_extensions>
+                        <type>singleton</type>
+                        <class>innobyte_core/feed</class>
+                        <method>checkExtensions</method>
+                    </innobyte_core_extensions>
+                </observers>
+            </controller_action_predispatch>
+            
+            <admin_system_config_section_save_after>
+                <observers>
+                    <innobyte_core_install>
+                        <type>model</type>
+                        <class>innobyte_core/data</class>
+                        <method>install</method>
+                    </innobyte_core_install>
+                </observers>
+            </admin_system_config_section_save_after>
+            <model_config_data_save_before>
+                <observers>
+                    <innobyte_core_init_setup>
+                        <type>model</type>
+                        <class>innobyte_core/data</class>
+                        <method>init</method>
+                    </innobyte_core_init_setup>
+                </observers>
+            </model_config_data_save_before>
+        </events>
+    </adminhtml>
+</config>

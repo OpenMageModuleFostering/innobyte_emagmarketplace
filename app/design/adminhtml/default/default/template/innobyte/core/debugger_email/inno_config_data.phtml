@@ -1,0 +1,20 @@
+<?php $_magento = $this->getMagento(); ?>
+
+<?php if (isset($_magento['inno_extensions_info'])) : ?>
+<ul style="font-size:12px; line-height:16px; margin:0 0 16px 0; padding:0;">
+    <?php foreach ($_magento['inno_extensions_info'] as $_key=>$_item): ?>
+        <li style="list-style:none inside; padding:0 0 0 10px;">
+            <div style="width: 300px;float:left;font-family:monospace;">
+                <?php echo $_item['path']; ?>
+            </div>
+            <div style="width: 200px;float:left;margin-bottom: 15px;">
+                <?php echo $_item['value']; ?>
+            </div>
+            <div style="clear: both"></div>
+        </li>
+    <?php endforeach; ?>
+</ul>
+<?php else: ?>
+--- no innobyte extension config data found
+<?php endif; ?>
+<div style="clear: both"></div>

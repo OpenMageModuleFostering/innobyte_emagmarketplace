@@ -1,0 +1,22 @@
+<?php
+/**
+ * Autocomplete returned list.
+ *
+ * @category Innobyte
+ * @package  Innobyte_EmagMarketplace
+ * @author   Bogdan Constantinescu <bogdan.constantinescu@innobyte.com>
+ */
+ ?>
+<ul data-address-type="<?php echo $this->escapeHtml($addressType); ?>">
+<?php foreach ($items as $item): ?>
+    <li data-emag-id="<?php echo $this->escapeHtml($item['id']); ?>"
+        data-county="<?php echo $this->escapeHtml($item['county']); ?>"
+        <?php if (isset($item['county_id'])): ?>
+        data-county-id="<?php echo intval($item['county_id']); ?>"
+        <?php endif; ?>
+        >
+        <strong class="emag-city-name-<?php echo $this->escapeHtml($addressType); ?>"><?php echo $this->escapeHtml($item['name']); ?></strong>
+        <span class="informal"><?php echo $this->escapeHtml($item['description']); ?></span>
+    </li>
+<?php endforeach; ?>
+</ul>

@@ -1,0 +1,31 @@
+
+<?php $_magento = $this->getMagento(); ?>
+
+<?php if (isset($_magento['rewrites']) && !empty($_magento['rewrites']) ) : ?>
+<ul style="font-size:12px; line-height:16px; margin:0 0 16px 0; padding:0;">
+    <?php foreach ($_magento['rewrites'] as $_type=>$_rewrite): ?>
+        <li style="list-style:none inside; padding:0 0 0 10px; margin-top: 15px;">
+            <div style="display:block; overflow: hidden;">
+                <div style="border-bottom: 1px solid #CCCCCC;font-weight: bold;">
+                    &ndash; <?php echo $_type; ?><br/>
+                </div>
+                
+                <div style="margin-left:25px">
+                    <?php foreach ($_rewrite as $_class=>$_rewrites): ?>
+                        <div style="width: 30%;float:left;font-family:monospace;">
+                            <?php echo $_class; ?>
+                        </div>
+                        <div style="width: 70%;float:left;margin-bottom: 15px;">
+                            <?php foreach ($_rewrites as $_key=>$_rewriteClass): ?>
+                                <?php echo $_rewriteClass; ?><br/>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </li>
+    <?php endforeach; ?>
+</ul>
+<?php else: ?>
+--- no rewrites
+<?php endif; ?>

@@ -1,0 +1,46 @@
+<?php $emagVouchers = $this->getQuote()->getEmagVouchers(); ?>
+<?php if (!empty($emagVouchers)): ?>
+    <?php foreach ($emagVouchers as $voucher): ?>
+        <?php $url = $this->getUrl('*/emag_voucher/remove', array('voucher_id' => $voucher['emag_voucher_id'], 'quote_id' => $this->getQuote()->getId())) ?>
+        <tr class="<?php echo $this->getTotal()->getCode(); ?>">
+            <td style="<?php echo $this->getTotal()->getStyle() ?>" class="a-right"
+                colspan="<?php echo $this->getColspan(); ?>">
+                <?php if ($this->getRenderingArea() == $this->getTotal()->getArea()): ?><strong><?php endif; ?>
+                    <?php echo $this->escapeHtml($voucher['emag_voucher_name']); ?>
+                    <?php if ($this->getRenderingArea() == $this->getTotal()->getArea()): ?></strong><?php endif; ?>
+                <img src="<?php echo $this->getSkinUrl('images/icon_btn_delete.gif') ?>" class="emag-voucher-remove"
+                     onclick="inno.emag_marketplace.removeVoucher('<?php echo $url ?>')"
+                     title="<?php echo Mage::helper('innobyte_emag_marketplace')->__('Remove') ?>"/>
+            </td>
+            <td style="<?php echo $this->getTotal()->getStyle() ?>" class="a-right">
+                <?php if ($this->getRenderingArea() == $this->getTotal()->getArea()): ?><strong><?php endif; ?>
+                    <?php echo $this->formatPrice($voucher['emag_sale_price']) ?>
+                    <?php if ($this->getRenderingArea() == $this->getTotal()->getArea()): ?></strong><?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+
+    <script type="text/javascript">
+        var inno = inno || {};
+        inno.emag_marketplace = {
+            removeVoucher: function (url) {
+                var canDelete = confirm('<?php echo Mage::helper('innobyte_emag_marketplace')->__('Voucher will be removed permanently from quote. Are you sure?')?>');
+                if (!canDelete) {
+                    return;
+                }
+                new Ajax.Request(url, {
+                    method: 'post',
+                    onSuccess: function (transport) {
+                        var response = transport.responseText || "no response text";
+
+                        alert(response);
+                        order.loadArea(['totals'], true);
+                    },
+                    onFailure: function () {
+                        alert('<?php echo Mage::helper('innobyte_emag_marketplace')->__('There was an error while processing request.') ?>');
+                    }
+                });
+            }
+        };
+    </script>
+<?php endif; ?>

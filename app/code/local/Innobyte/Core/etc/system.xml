@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+        <innobyte_core translate="label" module="innobyte_core">
+            <label>Innobyte Extensions</label>
+            <sort_order>1</sort_order>
+        </innobyte_core>
+    </tabs>
+    <sections>
+        <innobyte_core translate="label" module="innobyte_core">
+            <label>Info</label>
+            <tab>innobyte_core</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>99999</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <extensions translate="label">
+                    <label>Installed Innobyte Extensions</label>
+                    <frontend_type>text</frontend_type>
+                    <frontend_model>innobyte_core/system_config_form_fieldset_extensions</frontend_model>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </extensions>
+                <adminnotification>
+                    <label>Innobyte Notifications</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>60</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <feeds translate="label">
+                            <label>I'd like to be informed about:</label>
+                            <comment></comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                            <source_model>innobyte_core/source_feed_type</source_model>
+                        </feeds>
+
+                    </fields>
+                </adminnotification>
+                <debugger>
+                    <label>Debugger / Contact Us</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>70</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <email translate="label">
+                            <label>Send Debug Info to</label>
+                            <comment><![CDATA[
+                                email address that will receive the debug report. You have to "Save Config" first then "Send email".
+                            ]]>
+                            </comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                            <source_model>innobyte_core/source_feed_type</source_model>
+                        </email>
+                        
+                        <email_template translate="label">
+                            <label>Email Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>
+                            <![CDATA[
+                                if you create and select a custom email template (not recommended). You have to "Save Config" first then "Send email".
+                            ]]>
+                            </comment>
+                        </email_template>
+                        
+                        <explanation_message translate="label">
+                            <label>Message</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>
+                            <![CDATA[
+                                this message will help us better understand your problem.
+                            ]]>
+                            </comment>
+                        </explanation_message>
+
+                        <send_now translate="label comment">
+                            <label></label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>innobyte_core/system_config_button</frontend_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>
+                            <![CDATA[
+                                it will instantly send a troubleshooter report to the above email address. 
+                                The email contains information regarding your Magento edition, version, rewrites, cron jobs, 
+                                PHP information, Innobyte extensions configuration data and all the log files found in Magento log folder.
+                            ]]>
+                            </comment>
+                        </send_now>
+
+                    </fields>
+                </debugger>
+            </groups>
+        </innobyte_core>
+        <innobyte_shop>
+            <label>Shop</label>
+            <tab>innobyte_core</tab>
+            <class>innobyte-shop</class>
+            <frontend_type>text</frontend_type>
+            <sort_order>9999</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <extensions translate="label">
+                    <label>Innobyte Extensions Shop</label>
+                    <frontend_type>text</frontend_type>
+                    <frontend_model>innobyte_core/system_config_form_fieldset_shop</frontend_model>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </extensions>
+            </groups>
+        </innobyte_shop>
+    </sections>
+</config>

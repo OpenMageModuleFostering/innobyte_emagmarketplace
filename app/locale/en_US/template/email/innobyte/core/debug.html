@@ -1,0 +1,99 @@
+<!--@subject Troubleshooter email for {{var store.getFrontendName()}}! @-->
+<!--@vars
+{"store url=\"\"":"Store Url",
+"var logo_url":"Email Logo Image Url",
+"var magento":"Magento information",
+"var explanation_message":"Explanation message",
+"var php_info":"PHP info"}
+@-->
+
+<!--@styles
+body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+@-->
+
+<body style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+<div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+<table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
+<tr>
+<td align="center" valign="top" style="padding:20px 0 20px 0">
+    <!-- [ header starts here] -->
+    <table bgcolor="FFFFFF" cellspacing="0" cellpadding="10" border="0" width="650" style="border:1px solid #E0E0E0;">
+        <tr>
+            <td valign="top">
+                <a href="{{store url=""}}">
+                    <img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"/>
+                </a>
+            </td>
+        </tr>
+        <!-- [ middle starts here] -->
+        <tr>
+            <td valign="top">
+                <h1 style="font-size:22px; font-weight:normal; line-height:22px; margin:0 0 11px 0;">Hello,</h1>
+                <p style="font-size:12px; line-height:16px; margin:0 0 16px 0;">
+                    This email contains informations regarding <a href="{{store url=""}}">{{var store.getFrontendName()}}</a>.
+                </p>
+
+                <p style="font-style: italic;">{{var explanation_message}}</p>
+                <p></p>
+                <p style="border:1px solid #E0E0E0; font-size:12px; line-height:16px; margin:0; padding:13px 18px; background:#f9f9f9;">
+                {{block type='core/template' 
+                        area='adminhtml' 
+                        template='innobyte/core/debugger_email/general.phtml' 
+                        magento=$magento}}
+                </p>
+
+                
+                <h2>Installed Innobyte Extension</h2>
+                {{block type='core/template' 
+                        area='adminhtml' 
+                        template='innobyte/core/debugger_email/inno_extensions.phtml' 
+                        magento=$magento}}
+
+
+                <h2>Disabled output</h2>
+                {{block type='core/template' 
+                        area='adminhtml' 
+                        template='innobyte/core/debugger_email/disabled_extensions.phtml' 
+                        magento=$magento}}
+
+
+                <h2>Rewrites</h2>
+                {{block type='core/template' 
+                        area='adminhtml' 
+                        template='innobyte/core/debugger_email/rewrites.phtml' 
+                        magento=$magento}}
+                        
+                <h2>Cron</h2>
+                {{block type='core/template' 
+                        area='adminhtml' 
+                        template='innobyte/core/debugger_email/cron.phtml' 
+                        magento=$magento}}
+                        
+                <hr/>
+                
+                {{var php_info}}
+                
+<!--                <h2>Installed Innobyte Extensions Config Data</h2>
+                {{block type='core/template' 
+                        area='adminhtml' 
+                        template='innobyte/core/debugger_email/inno_config_data.phtml' 
+                        magento=$magento}}-->
+
+            </td>
+        </tr>
+        <!-- [ footer starts here] -->
+        <tr>
+            <td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center;">
+                <center>
+                    <p style="font-size:12px; margin:0;">
+                        Thank you, <strong>{{var store.getFrontendName()}}</strong>
+                    </p>
+                </center>
+            </td>
+        </tr>
+    </table>
+</td>
+</tr>
+</table>
+</div>
+</body>

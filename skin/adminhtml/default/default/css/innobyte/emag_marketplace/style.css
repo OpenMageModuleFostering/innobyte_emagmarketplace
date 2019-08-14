@@ -1,0 +1,37 @@
+.original-item {
+    border-bottom: dotted 1px #CCCCCC;
+    text-align: center;
+    margin: 0 0 5px 0;
+}
+.original-item .price, .original-item .quantity {
+    color: red;
+    font-weight: bold;
+}
+.emag-voucher-remove {
+    cursor: pointer;
+    width: 11px;
+}
+.innoemag-addremove-item {
+    border: 1px solid #000;
+    padding: 0px 5px 0px 5px;
+    float: right;
+    cursor: pointer;
+    width: 6px;
+}
+#emag-shipping-rate {
+    width: 70px;
+}
+div.emag-city-autocomplete {
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 250px;
+    z-index: 10000;
+}
+.emag-city-autocomplete-indicator {
+    position: absolute;
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<layout>
+    <adminhtml_system_config_edit>
+        <reference name="content">
+            <block type="innobyte_core/shop" name="innobyte_core_shop" template="innobyte/core/shop.phtml"></block>
+        </reference>
+    </adminhtml_system_config_edit>
+</layout>	

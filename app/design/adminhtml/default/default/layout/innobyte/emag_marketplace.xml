@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>    
+    <adminhtml_sales_order_view>
+        <reference name="head">
+            <action method="addItem">
+                <type>js_css</type>
+                <name>prototype/windows/themes/default.css</name>
+            </action>
+            <action method="addCss">
+                <name>lib/prototype/windows/themes/magento.css</name>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_view_invoice_popup"
+                   name='emag_invoice_popup'
+                   template="innobyte/emag_marketplace/sales/order/view/invoice/popup.phtml">
+            </block>
+        </reference>
+        <reference name="order_totals">
+            <block type="adminhtml/sales_order_totals_item"
+                   name="emag_voucher"
+                   template="innobyte/emag_marketplace/sales/order/totals.phtml">
+                <action method="setBeforeCondition">
+                    <condition>discount</condition>
+                </action>
+            </block>
+        </reference>
+        <reference name="order_tab_info">
+            <action method="setTemplate">
+                <template>innobyte/emag_marketplace/sales/order/view/tab/info.phtml</template>
+            </action>
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_view_comment" name="emag_customer_comment"
+                   template="innobyte/emag_marketplace/sales/order/view/comment.phtml"/>
+        </reference>
+    </adminhtml_sales_order_view>
+
+    <adminhtml_sales_invoice_upload_popup>
+        <update handle="editor"/>
+        <reference name="content">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_view_invoice_upload"
+                   name="emag_invoice_upload">
+                <block type="innobyte_emag_marketplace/adminhtml_sales_order_view_invoice_upload_form"
+                       name="form"/>
+            </block>
+        </reference>
+        <remove name="footer"/>
+    </adminhtml_sales_invoice_upload_popup>
+
+    <adminhtml_sales_order_invoice_new>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item"
+                   name="emag_voucher"
+                   template="innobyte/emag_marketplace/sales/order/totals.phtml">
+                <action method="setBeforeCondition">
+                    <condition>discount</condition>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_invoice_new>
+
+    <adminhtml_sales_order_invoice_updateqty>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item"
+                   name="emag_voucher"
+                   template="innobyte/emag_marketplace/sales/order/totals.phtml">
+                <action method="setBeforeCondition">
+                    <condition>discount</condition>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_invoice_updateqty>
+
+    <adminhtml_sales_order_invoice_view>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item"
+                   name="emag_voucher"
+                   template="innobyte/emag_marketplace/sales/order/totals.phtml">
+                <action method="setBeforeCondition">
+                    <condition>discount</condition>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item"
+                   name="emag_voucher"
+                   template="innobyte/emag_marketplace/sales/order/totals.phtml">
+                <action method="setBeforeCondition">
+                    <condition>discount</condition>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item"
+                   name="emag_voucher"
+                   template="innobyte/emag_marketplace/sales/order/totals.phtml">
+                <action method="setBeforeCondition">
+                    <condition>discount</condition>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_creditmemo_updateqty>
+
+    <adminhtml_sales_order_create_index>
+        <reference name="shipping_method">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_shipping_method_form"
+                   template="innobyte/emag_marketplace/sales/order/create/shipping/method/form.phtml" name="form"/>
+        </reference>
+        <reference name="billing_method">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_billing_method_form"
+                   template="sales/order/create/billing/method/form.phtml" name="form"/>
+        </reference>
+    </adminhtml_sales_order_create_index>
+
+    <adminhtml_sales_order_edit_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <script>js/innobyte/emag_marketplace/protolicius/event.simulate.js</script>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <script>js/innobyte/emag_marketplace/locality.js</script>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/innobyte/emag_marketplace/style.css</name>
+            </action>
+        </reference>
+        <reference name="shipping_address">
+            <action method="setTemplate">
+                <new_template>innobyte/emag_marketplace/sales/order/create/form/address.phtml</new_template>
+            </action>
+        </reference>
+        <reference name="billing_address">
+            <action method="setTemplate">
+                <new_template>innobyte/emag_marketplace/sales/order/create/form/address.phtml</new_template>
+            </action>
+        </reference>
+        <reference name="items">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_items_grid"
+                   template="innobyte/emag_marketplace/sales/order/create/items/grid.phtml"
+                   name="items_grid">
+                <block type="adminhtml/sales_order_create_coupons" template="sales/order/create/coupons/form.phtml"
+                       name="coupons">
+                    <block type="adminhtml/sales_order_create_coupons_form"
+                           template="sales/order/create/coupons/form.phtml" name="form"/>
+                </block>
+            </block>
+        </reference>
+    </adminhtml_sales_order_edit_index>
+
+    <adminhtml_sales_order_create_load_block_data>
+        <reference name="items">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_items_grid"
+                   template="innobyte/emag_marketplace/sales/order/create/items/grid.phtml"
+                   name="items_grid">
+                <block type="adminhtml/sales_order_create_coupons" template="sales/order/create/coupons/form.phtml"
+                       name="coupons">
+                    <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_coupons_form"
+                           template="sales/order/create/coupons/form.phtml" name="form"/>
+                </block>
+            </block>
+        </reference>
+        <reference name="shipping_method">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_shipping_method_form"
+                   template="innobyte/emag_marketplace/sales/order/create/shipping/method/form.phtml" name="form"/>
+        </reference>
+        <reference name="billing_method">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_billing_method_form"
+                   template="sales/order/create/billing/method/form.phtml" name="form"/>
+        </reference>
+        <reference name="shipping_address">
+            <action method="setTemplate">
+                <new_template>innobyte/emag_marketplace/sales/order/create/form/address.phtml</new_template>
+            </action>
+        </reference>
+        <reference name="billing_address">
+            <action method="setTemplate">
+                <new_template>innobyte/emag_marketplace/sales/order/create/form/address.phtml</new_template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_create_load_block_data>
+
+    <adminhtml_sales_order_create_load_block_items>
+        <reference name="items">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_items_grid"
+                   template="innobyte/emag_marketplace/sales/order/create/items/grid.phtml"
+                   name="items_grid">
+                <block type="adminhtml/sales_order_create_coupons" template="sales/order/create/coupons/form.phtml"
+                       name="coupons">
+                    <block type="adminhtml/sales_order_create_coupons_form"
+                           template="sales/order/create/coupons/form.phtml" name="form"/>
+                </block>
+            </block>
+        </reference>
+    </adminhtml_sales_order_create_load_block_items>
+
+    <adminhtml_sales_order_create_load_block_shipping_method>
+        <reference name="shipping_method">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_shipping_method_form"
+                   template="innobyte/emag_marketplace/sales/order/create/shipping/method/form.phtml" name="form"/>
+        </reference>
+    </adminhtml_sales_order_create_load_block_shipping_method>
+
+    <adminhtml_sales_order_create_load_block_billing_method>
+        <reference name="billing_method">
+            <block type="innobyte_emag_marketplace/adminhtml_sales_order_create_billing_method_form"
+                   template="sales/order/create/billing/method/form.phtml" name="form"/>
+        </reference>
+    </adminhtml_sales_order_create_load_block_billing_method>
+
+    <adminhtml_sales_order_create_load_block_shipping_address>
+        <reference name="shipping_address">
+            <action method="setTemplate">
+                <new_template>innobyte/emag_marketplace/sales/order/create/form/address.phtml</new_template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_create_load_block_shipping_address>
+    
+    <adminhtml_sales_order_create_load_block_billing_address>
+        <reference name="billing_address">
+            <action method="setTemplate">
+                <new_template>innobyte/emag_marketplace/sales/order/create/form/address.phtml</new_template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_create_load_block_billing_address>
+    
+    <adminhtml_sales_order_shipment_new>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <script>js/innobyte/emag_marketplace/packaging.js</script>
+            </action>
+        </reference>
+        <reference name="shipment_packaging">
+            <action method="setTemplate">
+                <template>innobyte/emag_marketplace/sales/order/shipment/packaging/popup.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_shipment_new>
+    
+    <adminhtml_sales_order_shipment_view>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <script>js/innobyte/emag_marketplace/packaging.js</script>
+            </action>
+        </reference>
+        <reference name="shipment_packaging">
+            <action method="setTemplate">
+                <template>innobyte/emag_marketplace/sales/order/shipment/packaging/popup.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_shipment_view>
+    
+    <adminhtml_emag_category_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <script>js/innobyte/emag_marketplace/category.js</script>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="adminhtml/store_switcher" name="store_switcher" as="store_switcher">
+                <action method="setUseConfirm">
+                    <params>0</params>
+                </action>
+            </block>
+            <block type="innobyte_emag_marketplace/adminhtml_category"
+                   name="inno.emag.category.grid.container"/>
+        </reference>
+    </adminhtml_emag_category_index>
+
+    <adminhtml_emag_vat_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <script>js/innobyte/emag_marketplace/vat.js</script>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="adminhtml/store_switcher" name="store_switcher" as="store_switcher">
+                <action method="setUseConfirm">
+                    <params>0</params>
+                </action>
+            </block>
+            <block type="innobyte_emag_marketplace/adminhtml_vat"
+                   name="inno.emag.vat.grid.container"/>
+        </reference>
+    </adminhtml_emag_vat_index>
+    
+    <adminhtml_emag_locality_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <script>js/innobyte/emag_marketplace/locality.js</script>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="adminhtml/store_switcher" name="store_switcher" as="store_switcher">
+                <action method="setUseConfirm">
+                    <params>0</params>
+                </action>
+            </block>
+            <block type="innobyte_emag_marketplace/adminhtml_locality"
+                   name="inno.emag.locality.grid.container"/>
+        </reference>
+    </adminhtml_emag_locality_index>
+
+    <adminhtml_catalog_product_edit>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <script>js/innobyte/emag_marketplace/product.js</script>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/innobyte/emag_marketplace/style.css</name>
+            </action>
+        </reference>
+        <reference name="product_tabs">
+            <action method="addTab">
+                <name>innobyte_emag_marketplace_tab</name>
+                <block>innobyte_emag_marketplace/adminhtml_catalog_product_edit_tab_emagMarketplace</block>
+            </action>
+        </reference>
+        <reference name="product_edit">
+            <action method="setTemplate"><path>innobyte/emag_marketplace/catalog/product/edit.phtml</path></action>
+        </reference>
+    </adminhtml_catalog_product_edit>
+</layout>

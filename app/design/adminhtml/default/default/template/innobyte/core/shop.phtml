@@ -1,0 +1,37 @@
+<?php if ($this->configPage == 'innobyte_core'): ?>
+<div id="innobyte_core_extensions_hidden" style="display:none;">
+    <table class="form-list">
+        <tbody>
+        <?php foreach ($this->getExtensions() as $extension): ?>
+        <tr>
+            <td>
+                <img src="<?php echo $this->getIcon($extension)->getSource()?>"
+                     alt="<?php echo $this->getIcon($extension)->getTitle()?>"/>
+            </td>
+            <td>
+                <a href="<?php echo $extension->getFeedInfo()->getUrl()?>"
+                   onclick="this.target = '_blank'"><?php echo $extension->getFeedInfo()->getDisplayName()?></a>
+            </td>
+            <td><?php echo $extension->getVersion()?></td>
+            <?php /*
+            <td>
+                <a href="http://shop.innobyte.com/extensions/<?php echo $extension->getName()?>-<?php echo $extension->getVersion()?>/readme.html"
+                   onclick="this.target = '_blank'"><img src="<?php echo $this->getSkinUrl('innobyte/core/images/readme.png')?>"/></a>
+            </td>
+             */
+            ?>
+        </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<?php endif; ?>
+<?php if ($this->configPage == 'innobyte_shop'): ?>
+<div id="innobyte_shop" style="display:none;">
+    <?php echo $this->_getShopData()->getTextResponse()?>
+</div>
+<?php endif; ?>
+
+<script type="text/javascript">
+    innobyte_core_admin_section = '<?php echo $this->configPage?>';
+</script>

@@ -1,0 +1,13 @@
+<?php $_magento = $this->getMagento(); ?>
+
+<?php if (isset($_magento['disabled_modules'])) : ?>
+<ul style="font-size:12px; line-height:16px; margin:0 0 16px 0; padding:0;">
+    <?php foreach ($_magento['disabled_modules'] as $_key=>$_extension): ?>
+        <li style="list-style:none inside; padding:0 0 0 10px;">
+            &ndash; <?php echo $_extension; ?>
+        </li>
+    <?php endforeach; ?>
+</ul>
+<?php else: ?>
+--- no extension found
+<?php endif; ?>

@@ -1,0 +1,15 @@
+<config>
+    <modules>
+        <Innobyte_EmagMarketplace>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Mage_Adminhtml/>
+                <Mage_Sales/>
+                <Mage_Catalog/>
+                <Mage_Customer/>
+                <Innobyte_Core/>
+            </depends>
+        </Innobyte_EmagMarketplace>
+    </modules>
+</config>

@@ -1,0 +1,23 @@
+
+<?php echo $this->getButtonHtml();?>
+
+<script type="text/javascript">
+    //<![CDATA[
+    // init inno namespace if case
+    var inno = inno || {};
+    // init core namespace if case
+    inno.core = inno.core || {} ;
+    inno.core.sendReport = function () {
+            new Ajax.Request('<?php echo $this->getAjaxSendReportUrl() ?>', {
+                method: 'POST',
+                parameters: {'message':$('innobyte_core_debugger_explanation_message').value},
+                onSuccess: function (transport) {
+                    var response = transport.responseText.evalJSON();
+                    if (response.code) {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
+    //]]>
+</script>

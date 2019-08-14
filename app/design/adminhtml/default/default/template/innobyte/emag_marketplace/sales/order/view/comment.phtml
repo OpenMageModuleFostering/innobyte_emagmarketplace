@@ -1,0 +1,10 @@
+<?php /** @var $this Innobyte_EmagMarketplace_Block_Adminhtml_Sales_Order_View_Comment */ ?>
+<ul class="note-list">
+    <li>
+        <?php if ($this->getCustomerComment()): ?>
+            <?php echo $this->escapeHtml($this->getCustomerComment(), array('b', 'br', 'strong', 'i', 'u')) ?>
+        <?php else: ?>
+            <?php echo Mage::helper('innobyte_emag_marketplace')->__('No comment supplied.') ?>
+        <?php endif; ?>
+    </li>
+</ul>

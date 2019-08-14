@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Adminhtml config file.
+ *
+ * @category Innobyte
+ * @package  Innobyte_EmagMarketplace
+ * 
+ * @author   Valentin Sandu <valentin.sandu@innobyte.com>
+ * @author   Bogdan Constantinescu <bogdan.constantinescu@innobyte.com>
+ */
+-->
+
+<config>
+    <menu>
+        <innobyte_emag_marketplace module="innobyte_emag_marketplace" translate="title">
+            <title>eMAG Marketplace</title>
+            <sort_order>200</sort_order>
+            <children>
+                <category translate="title">
+                    <title>Categories</title>
+                    <sort_order>10</sort_order>
+                    <action>adminhtml/emag_category/index</action>
+                </category>
+                <vat translate="title">
+                    <title>VATs</title>
+                    <sort_order>15</sort_order>
+                    <action>adminhtml/emag_vat/index</action>
+                </vat>
+                <localities translate="title">
+                    <title>Localities</title>
+                    <sort_order>20</sort_order>
+                    <action>adminhtml/emag_locality/index</action>
+                </localities>
+                <settings translate="title">
+                    <title>Settings</title>
+                    <sort_order>25</sort_order>
+                    <action>adminhtml/system_config/edit/section/Innobyte_EmagMarketplace</action>
+                </settings>
+            </children>
+        </innobyte_emag_marketplace>
+    </menu>
+
+    <acl>
+        <all>
+            <title>Allow Everything</title>
+        </all>
+        <resources>
+            <admin>
+                <children>
+                    <sales translate="title" module="sales">
+                        <children>
+                            <order translate="title">
+                                <children>
+                                    <actions translate="title">
+                                        <children>
+                                            <emag_upload_invoice translate="title"><title>eMAG Upload Invoice</title></emag_upload_invoice>
+                                            <emag_acknowledge translate="title"><title>eMAG Acknowledge</title></emag_acknowledge>
+                                            <emag_prepare translate="title"><title>eMAG Prepared</title></emag_prepare>
+                                            <emag_cancel translate="title"><title>eMAG Cancel</title></emag_cancel>
+                                        </children>
+                                    </actions>
+                                </children>
+                            </order>
+                        </children>
+                    </sales>
+
+                    <innobyte_emag_marketplace module="innobyte_emag_marketplace" translate="title">
+                        <title>eMAG Marketplace</title>
+                        <children>
+                            <category translate="title" module="innobyte_emag_marketplace">
+                                <title>Categories</title>
+                                <sort_order>10</sort_order>
+                            </category>
+                            <locality translate="title" module="innobyte_emag_marketplace">
+                                <title>Localities</title>
+                                <sort_order>20</sort_order>
+                            </locality>
+                            <vat translate="title" module="innobyte_emag_marketplace">
+                                <title>VATs</title>
+                                <sort_order>30</sort_order>
+                            </vat>
+                            <vouchers translate="title" module="innobyte_emag_marketplace">
+                                <title>Vouchers</title>
+                                <sort_order>40</sort_order>
+                            </vouchers>
+                        </children>
+                    </innobyte_emag_marketplace>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <Innobyte_EmagMarketplace translate="title" module="innobyte_emag_marketplace">
+                                        <title>eMAG Marketplace</title>
+                                        <sort_order>10</sort_order>
+                                    </Innobyte_EmagMarketplace>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

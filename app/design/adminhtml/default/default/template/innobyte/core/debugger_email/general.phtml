@@ -1,0 +1,11 @@
+<?php $_magento = $this->getMagento(); ?>
+
+<strong>Magento edition</strong>: <?php echo $_magento['edition'] ?><br/>
+<strong>Magento version</strong>: <?php echo $_magento['version'] ?><br/>
+<strong>Compilation</strong>: <?php echo $_magento['compilation'] ?><br/>
+<strong>Magento Domains</strong>: 
+                            
+                            
+<?php foreach ($_magento['domains'] as $_key=>$_domain): ?>
+    <?php echo $_domain; ?><br/>
+<?php endforeach; ?>

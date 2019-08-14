@@ -1,0 +1,468 @@
+<?xml version="1.0"?>
+<config>    
+    <sections>
+        <Innobyte_EmagMarketplace translate="label" module="innobyte_emag_marketplace">
+            <label>eMAG Marketplace</label>
+            <tab>innobyte_core</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>20</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <license translate="label" module="innobyte_core">
+                    <label>License</label>
+                    <frontend_type>text</frontend_type>
+                    <frontend_model>innobyte_core/system_config_form_fieldset_extensions</frontend_model>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <ar translate="label">
+                            <label>ar</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </ar>
+                        <websites translate="label">
+                            <label>websites</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </websites>
+                        <time translate="label">
+                            <label>Time</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </time>
+                        <installed translate="label">
+                            <label>Installed</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </installed>
+                        <count translate="label">
+                            <label>Installed</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </count>
+                        <key translate="label">
+                            <label>License key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </key>
+                        <enabled translate="label">
+                            <label>Enable Extension</label>
+                            <frontend_type>select</frontend_type>
+                            <frontend_model>innobyte_core/system_config_form_renderer_field</frontend_model>
+                            <source_model>innobyte_core/source_config_enabledisable</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <hint>Innobyte_EmagMarketplace</hint>
+                        </enabled>
+                    </fields>
+                </license>
+                <general_settings translate="label" module="innobyte_emag_marketplace">
+                    <label>General Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label comment">
+                            <label>Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Enable/Disable extension.]]></comment>
+                        </active>
+                        <debug translate="label comment">
+                            <label>Debug</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Enable debug mode.]]></comment>
+                        </debug>
+                        <domain translate="label comment">
+                            <label>eMAG Domain</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>15</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[eMAG Marketplace domain in your country. (Ex: emag.ro)]]></comment>
+                        </domain>
+                        <allowed_ip_addresses>
+                            <label>Allowed IP Addresses</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>18</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[List of allowed IP Addresses that can access invoice directories. Separated by comma.]]></comment>
+                        </allowed_ip_addresses>
+                        <email>
+                            <label>Error Reporting Email</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-email</validate>
+                            <comment><![CDATA[Email address that will receive eMAG order sync errors.]]></comment>
+                        </email>
+                        <template translate="label comment">
+                            <label>Error Reporting Email Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Set error reporting email template.]]></comment>
+                        </template>
+                        <enable_limited_stock translate="label comment">
+                            <label>Product offer availability "limited stock"</label>
+                            <validate>validate-number</validate>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Enable/Disable availability status "limited stock" for a product.]]></comment>
+                        </enable_limited_stock>
+                        <limited_stock translate="label comment">
+                            <label>Availability Limited Stock</label>
+                            <validate>validate-number required-entry</validate>
+                            <frontend_type>text</frontend_type>                            
+                            <sort_order>35</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><enable_limited_stock>1</enable_limited_stock></depends>
+                            <comment><![CDATA[Qty limit under which the product, if "in stock", should be considered as "limited stock"]]></comment>
+                        </limited_stock>
+                        <send_stock_qty translate="label comment">
+                            <label>Send Product Offer Stock Qty</label>
+                            <validate>validate-number</validate>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>                            
+                            <sort_order>40</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>                            
+                            <comment><![CDATA[Send also magento real stock qty, not only availability flags as "limited stock", "in stock", "out of stock"]]></comment>
+                        </send_stock_qty>
+                    </fields>
+                </general_settings>
+                <api_settings translate="label" module="innobyte_emag_marketplace">
+                    <label>Api Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <url translate="label comment">
+                            <label>Api URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Api URL provided by eMAG.]]></comment>
+                            <validate>validate-url</validate>
+                        </url>
+                        <username translate="label comment">
+                            <label>Api Username</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Api username provided by eMAG.]]></comment>
+                        </username>
+                        <password translate="label comment">
+                            <label>Api Password</label>
+                            <frontend_type>password</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Api password provided by eMAG.]]></comment>
+                        </password>
+                        <code translate="label comment">
+                            <label>Client Code</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Client code provided by eMAG.]]></comment>
+                        </code>
+                    </fields>
+                </api_settings>
+                <invoice_creditmemo_settings translate="label" module="innobyte_emag_marketplace">
+                    <label>Invoice / Creditmemo Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>30</sort_order>
+                    <show_in_default>0</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <invoice_prefix translate="label comment">
+                            <label>Invoice Prefix</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>innobyte_emag_marketplace/system_config_backend_prefix_invoice
+                            </backend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>
+                                <![CDATA[Define invoice prefix. Leave blank to use Magento default invoice prefix. (Ex:  PREFIX10000122) <br><strong>Note:</strong> <span style="color:orange">Maximum length 10 characters.</span>]]>
+                            </comment>
+                            <validate>validate-length maximum-length-10</validate>
+                        </invoice_prefix>
+                        <creditmemo_prefix translate="label comment">
+                            <label>Creditmemo Prefix</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>innobyte_emag_marketplace/system_config_backend_prefix_creditmemo
+                            </backend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>
+                                <![CDATA[Define creditmemo prefix. Leave blank to use Magento default creditmemo prefix. (Ex:  PREFIX10000122) <br><strong>Note:</strong> <span style="color:orange">Maximum length 10 characters.</span>]]>
+                            </comment>
+                            <validate>validate-length maximum-length-10</validate>
+                        </creditmemo_prefix>
+                    </fields>
+                </invoice_creditmemo_settings>
+                <shipping_settings translate="label" module="innobyte_emag_marketplace">
+                    <label>Shipping Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>40</sort_order>
+                    <show_in_default>0</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <awb_pdf_url translate="label comment">
+                            <label>AWB PDF URL</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>validate-url</validate>
+                            <sort_order>5</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[URL where to read AWB 's PDF from.<br/>Ex: https://mktp-stage.emag.ro/awb/read_pdf]]></comment>
+                        </awb_pdf_url>
+                        <courier_account_id translate="label comment">
+                            <label>Courier Account Id</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Unique identifier for vendor 's courier account. If not provided, a default account will be used when creating AWBs.]]></comment>
+                        </courier_account_id>
+                    </fields>
+                </shipping_settings>
+            </groups>
+        </Innobyte_EmagMarketplace>
+
+        <payment>
+            <groups>
+                <emag_banktransfer translate="label" module="innobyte_emag_marketplace">
+                    <label>eMAG Bank Transfer</label>
+                    <sort_order>1000</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <title translate="label">
+                            <label>Payment Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <sort_order>
+                            <label>Sort Order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-number</validate>
+                        </sort_order>
+                    </fields>
+                </emag_banktransfer>
+                <emag_cashondelivery translate="label" module="innobyte_emag_marketplace">
+                    <label>eMAG Cash on Delivery</label>
+                    <sort_order>1010</sort_order>
+                    <show_in_default>0</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <title translate="label">
+                            <label>Payment Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <sort_order>
+                            <label>Sort Order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-number</validate>
+                        </sort_order>
+                    </fields>
+                </emag_cashondelivery>
+                <emag_cc translate="label" module="innobyte_emag_marketplace">
+                    <label>eMAG Credit Card</label>
+                    <sort_order>1030</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <title translate="label">
+                            <label>Payment Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <sort_order>
+                            <label>Sort Order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-number</validate>
+                        </sort_order>
+                    </fields>
+                </emag_cc>
+                <emag_unknown translate="label" module="innobyte_emag_marketplace">
+                    <label>eMAG Unknown</label>
+                    <sort_order>1040</sort_order>
+                    <show_in_default>0</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <title translate="label">
+                            <label>Payment Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </title>
+                        <sort_order>
+                            <label>Sort Order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-number</validate>
+                        </sort_order>
+                    </fields>
+                </emag_unknown>
+            </groups>
+        </payment>
+
+        <carriers>
+            <groups>
+                <emagshipping translate="label" module="innobyte_emag_marketplace">
+                    <label>eMAG Shipping</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1000</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>20</sort_order>
+                        </title>
+                        <name translate="label">
+                            <label>Method Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>25</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </name>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <frontend_type>text</frontend_type>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>50</sort_order>
+                        </sort_order>
+                    </fields>
+                </emagshipping>
+            </groups>
+        </carriers>
+        
+        <shipping>
+            <groups>
+                <origin>
+                    <fields>                       
+                        <emag_locality_id translate="label" module="innobyte_emag_marketplace">
+                            <label>Locality Id</label>
+                            <frontend_type>hidden</frontend_type>
+                            <frontend_model>innobyte_emag_marketplace/adminhtml_form_field_localityId</frontend_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <sort_order>100</sort_order>  
+                        </emag_locality_id>
+                    </fields>
+                </origin>                
+            </groups>
+        </shipping>
+    </sections>
+</config>

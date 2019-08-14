@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Javascript translated texts.
+ *
+ * @category Innobyte
+ * @package  Innobyte_EmagMarketplace
+ * @author   Bogdan Constantinescu <bogdan.constantinescu@innobyte.com>
+ */
+-->
+<jstranslator>
+    <inno-emag-mktp-error-occurred translate="message" module="innobyte_emag_marketplace">
+        <message>An error occurred. Please try again later.</message>
+    </inno-emag-mktp-error-occurred>    
+    <inno-emag-mktp-remove-item translate="message" module="innobyte_emag_marketplace">
+        <message>Remove</message>
+    </inno-emag-mktp-remove-item>
+    <inno-emag-mktp-confirm-prod-send translate="message" module="innobyte_emag_marketplace">
+        <message>Please confirm product sending. All data that hasn't been saved will be lost.</message>
+    </inno-emag-mktp-confirm-prod-send>
+    <inno-emag-mktp-confirm-offer-send translate="message" module="innobyte_emag_marketplace">
+        <message>Please confirm offer sending. All data that hasn't been saved will be lost.</message>
+    </inno-emag-mktp-confirm-offer-send>
+    <inno-emag-mktp-confirm-offer-deactivation translate="message" module="innobyte_emag_marketplace">
+        <message>Please confirm offer deactivation. All data that hasn't been saved will be lost.</message>
+    </inno-emag-mktp-confirm-offer-deactivation>    
+    <inno-emag-mktp-order-city-load translate="message" module="innobyte_emag_marketplace">
+        <message>Loading...</message>
+    </inno-emag-mktp-order-city-load>
+    <inno-emag-mktp-family-type translate="message" module="innobyte_emag_marketplace">
+        <message>Family Type</message>
+    </inno-emag-mktp-family-type>
+    <inno-emag-mktp-family-type-characteristic-note translate="message" module="innobyte_emag_marketplace">
+        <message>This attribute will have to be set on associated products individually</message>
+    </inno-emag-mktp-family-type-characteristic-note>
+</jstranslator>

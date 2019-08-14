@@ -1,0 +1,16 @@
+<?php $this->setPriceDataObject($this->getSource()) ?>
+<?php $vouchers = $this->getSource()->getEmagVouchers() ?>
+<?php if ($vouchers): ?>
+    <?php /** @var $helper Innobyte_EmagMarketplace_Helper_Data */?>
+    <?php $helper = Mage::helper('innobyte_emag_marketplace'); ?>
+    <?php foreach($vouchers as $voucher): ?>
+    <tr>
+        <td class="label">
+            <?php echo $helper->getFormattedVoucherLabel($voucher['emag_voucher_name']) ?>
+        </td>
+        <td>
+            <?php echo $this->displayPrices($voucher['base_emag_sale_price'], $voucher['emag_sale_price']); ?>
+        </td>
+    </tr>
+    <?php endforeach ?>
+<?php endif; ?>

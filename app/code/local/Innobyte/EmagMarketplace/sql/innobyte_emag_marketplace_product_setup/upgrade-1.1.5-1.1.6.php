@@ -15,26 +15,24 @@ $installer = $this;
 
 $installer->startSetup();
 
-$attributeCode = 'emag_is_synced';
-if (!$installer->getAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode)) {
-    $this->addAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode, array(
-        'backend' => '',
-        'frontend' => '',
-        'type' => 'int',
-        'input' => 'text',
-        'label' => 'eMAG Synced',
-        'source' => '',
-        'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-        'default' => '0',
-        'searchable' => false,
-        'filterable' => false,
-        'comparable' => false,
-        'required' => false,
-        'visible' => false,
-        'user_defined' => false,
-        'used_in_product_listing' => false,
-        'unique' => false
-    ));
-}
+$this->addAttribute(Mage_Catalog_Model_Product::ENTITY, 'emag_is_synced', array(
+    'group' => 'General',
+    'backend' => '',
+    'frontend' => '',
+    'type' => 'int',
+    'input' => 'text',
+    'label' => 'eMAG Synced',
+    'source' => '',
+    'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+    'default' => '0',
+    'searchable' => false,
+    'filterable' => false,
+    'comparable' => false,
+    'required' => false,
+    'visible' => false,
+    'user_defined' => false,
+    'used_in_product_listing' => false,
+    'unique' => false
+));
 
 $installer->endSetup();

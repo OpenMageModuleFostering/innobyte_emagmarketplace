@@ -753,12 +753,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
             $currentCurrency = $this->getCurrentCurrency()->getCode();
 
             $rates = $this->_getCurrencyRates($baseCurrency);
-            $currencyRate = 1;
-            if (!empty($rates)){
-                $currencyRate = $rates[$currentCurrency];
-            }
-
-            $price = $price / $currencyRate;
+            $price = $price / $rates[$currentCurrency];
 
             if ($round) {
                 return $this->getStore()->roundPrice($price);

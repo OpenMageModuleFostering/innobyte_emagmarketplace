@@ -32,7 +32,7 @@ class Innobyte_EmagMarketplace_Model_Api_Response
 
 
     /**
-     * Constructor. initializes stuffs.
+     * Constructor. initializes sttuffs.
      *
      * @param array $apiResponse Api response.
      *

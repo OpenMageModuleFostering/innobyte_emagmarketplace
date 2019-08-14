@@ -282,11 +282,11 @@ abstract class Innobyte_EmagMarketplace_Model_Api_Abstract
     protected function getResourceActionApiUrl()
     {
         $url = $this->getHelper()->getApiUrl($this->getStoreId())
-            . '/' . $this->getResourceName() . '/' . $this->getActionName();
+            . DS . $this->getResourceName() . DS . $this->getActionName();
 
         $orderId = $this->getEmagOrderId();
         if ($orderId) {
-            $url .= '/' . $orderId;
+            $url .= DS . $orderId;
         }
 
         return $url;

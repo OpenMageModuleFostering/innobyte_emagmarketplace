@@ -12,6 +12,16 @@ class Innobyte_EmagMarketplace_Model_Sales_Invoice extends Mage_Core_Model_Abstr
 {
 
     /**
+     * Invoice entity type code
+     */
+    const ENTITY_TYPE_CODE_INVOICE = 'emag_invoice';
+
+    /**
+     * Creditmemo entity type code
+     */
+    const ENTITY_TYPE_CODE_CREDITMEMO = 'emag_creditmemo';
+
+    /**
      * Prefix of model events names
      *
      * @var string
@@ -134,7 +144,7 @@ class Innobyte_EmagMarketplace_Model_Sales_Invoice extends Mage_Core_Model_Abstr
      */
     public function getInvoiceBaseDirectory()
     {
-        return Mage::getBaseDir('media') . DS .  $this->getInvoiceDirectory();
+        return Mage::getBaseDir('media') . DS . $this->getInvoiceDirectory();
     }
 
     /**

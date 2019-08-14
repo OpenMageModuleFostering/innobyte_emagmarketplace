@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Observer that handles product related events.
  *
@@ -6,7 +7,6 @@
  * @package  Innobyte_EmagMarketplace
  * @author   Bogdan Constantinescu <bogdan.constantinescu@innobyte.com>
  */
-
 class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
 {
     /**
@@ -15,9 +15,8 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
      * @var Innobyte_EmagMarketplace_Helper_Data
      */
     protected $_helper;
-    
-    
-    
+
+
     /**
      * Constructor; initializes stuffs.
      */
@@ -25,9 +24,8 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
     {
         $this->_helper = Mage::helper('innobyte_emag_marketplace');
     }
-    
-    
-    
+
+
     /**
      * Getter method for helper property.
      *
@@ -37,9 +35,8 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
     {
         return $this->_helper;
     }
-    
-    
-    
+
+
     /**
      * Saves product emag data.
      * Triggered on catalog_product_save_after event.
@@ -54,16 +51,18 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
         $product = Mage::getModel('catalog/product')->setStoreId($storeId)
             ->load($observer->getEvent()->getProduct()->getId());
         if (!$this->_getHelper()->isProductActionValid($product)
-            || !Mage::app()->getRequest()->isPost()) {
+            || !Mage::app()->getRequest()->isPost()
+        ) {
             return $this;
         }
-        
+
         $data = Mage::app()->getRequest()->getPost('product', array());
         if (!array_key_exists('inno_emag_mktp', $data)
-            || !is_array($data['inno_emag_mktp'])) {
+            || !is_array($data['inno_emag_mktp'])
+        ) {
             return $this;
         }
-        
+
         $emagData = $data['inno_emag_mktp'];
         $emagProduct = Mage::getModel('innobyte_emag_marketplace/product')
             ->loadByProdIdAndStore($product->getId(), $storeId);
@@ -71,6 +70,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
             $this->_checkFilterEmagProductData($emagData, $product);
             $emagProduct->addData($emagData)
                 ->setProductId($product->getId())
+                ->setSku($product->getSku())
                 ->setStoreId($storeId);
             // save data also on non-filled associated products if config prod
             if ($product->isConfigurable()) {
@@ -86,6 +86,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                         $childEmagProduct->addData($emagData)
                             ->unsFamilyTypeId()
                             ->setProductId($childId)
+                            ->setSku($product->getSku())
                             ->setStoreId($storeId);
                         $emagProduct->addRelatedObject($childEmagProduct);
                     }
@@ -100,17 +101,31 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
             );
             throw $ex;
         }
-        
+
+        // update "emag_is_synced" product attribute; used in rendering correctly column "eMAG Synced"
+        if (!$product->getEmagIsSynced()) {
+            Mage::getResourceSingleton('catalog/product_action')->updateAttributes(
+                array($product->getId()),
+                array('emag_is_synced' => Innobyte_EmagMarketplace_Model_Product::IS_NOT_SYNCED),
+                Mage_Core_Model_App::ADMIN_STORE_ID
+            );
+
+            Mage::getResourceSingleton('catalog/product_action')->updateAttributes(
+                array($product->getId()),
+                array('emag_is_synced' => Innobyte_EmagMarketplace_Model_Product::IS_NOT_SYNCED),
+                $storeId
+            );
+        }
+
         return $this;
     }
-    
-    
-    
+
+
     /**
      * Check / filter emag product form data.
      *
-     * @param  array $emagData  Product post data.
-     * @param  Mage_Catalog_Model_Product $product    Magento product.
+     * @param  array $emagData Product post data.
+     * @param  Mage_Catalog_Model_Product $product Magento product.
      * @throws Mage_Core_Exception
      */
     protected function _checkFilterEmagProductData(
@@ -119,11 +134,11 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
     )
     {
         $storeId = $this->_getHelper()->getCurrStoreId();
-        
+
         if (is_null($product) || !$product->getId()) {
             Mage::throwException($this->_getHelper()->__('Invalid product id.'));
         }
-        
+
         if (array_key_exists('part_number_key', $emagData)) {
             $emagData['part_number_key'] = trim($emagData['part_number_key']);
             if (empty($emagData['part_number_key'])) {
@@ -132,7 +147,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
         } else {
             $emagData['part_number_key'] = null;
         }
-        
+
         if (array_key_exists('name', $emagData)) {
             $emagData['name'] = trim($emagData['name']);
             if (empty($emagData['name'])) {
@@ -146,7 +161,33 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                 $this->_getHelper()->__('Please fill eMAG product name.')
             );
         }
-        
+
+        // check price
+        if (array_key_exists('price', $emagData)) {
+            $emagData['price'] = trim($emagData['price']);
+            if (empty($emagData['price'])) {
+                $emagData['price'] = null;
+            }
+        } else {
+            $emagData['price'] = null;
+        }
+
+        // check special price
+        if (array_key_exists('special_price', $emagData)) {
+            $emagData['special_price'] = trim($emagData['special_price']);
+            if (empty($emagData['special_price'])) {
+                $emagData['special_price'] = null;
+            }
+        } else {
+            $emagData['special_price'] = null;
+        }
+
+        if (!empty($emagData['special_price']) && !empty($emagData['price']) && ($emagData['special_price'] >= $emagData['price'])) {
+            Mage::throwException(
+                $this->_getHelper()->__('eMAG product special price can not be equal or greater than eMAG product price.')
+            );
+        }
+
         if (array_key_exists('brand', $emagData)) {
             $emagData['brand'] = trim($emagData['brand']);
             if (empty($emagData['brand'])) {
@@ -160,7 +201,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                 $this->_getHelper()->__('Please fill eMAG product brand.')
             );
         }
-        
+
         if (array_key_exists('description', $emagData)) {
             $emagData['description'] = trim($emagData['description']);
             if (empty($emagData['description'])) {
@@ -169,7 +210,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
         } else {
             $emagData['description'] = null;
         }
-        
+
         if (array_key_exists('barcodes', $emagData)) {
             if (is_array($emagData['barcodes'])) {
                 $emagData['barcodes'] = array_filter(
@@ -183,7 +224,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
         } else {
             $emagData['barcodes'] = array();
         }
-        
+
         $categoryId = null;
         $emagCategory = Mage::getModel('innobyte_emag_marketplace/category');
         if (array_key_exists('category_id', $emagData)) {
@@ -223,12 +264,13 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                     $skipChars[] = $ftChar->getMageIdEmagChar();
                 }
             }
-            
+
             foreach ($emagCategory->getCharacteristics() as $characteristic) {
                 $charKey = 'category_characteristic' . $characteristic->getId();
                 if ((!array_key_exists($charKey, $emagData)
-                    || !strlen(trim($emagData[$charKey])))
-                    && !in_array($characteristic->getId(), $skipChars)) {
+                        || !strlen(trim($emagData[$charKey])))
+                    && !in_array($characteristic->getId(), $skipChars)
+                ) {
                     Mage::throwException(
                         $this->_getHelper()->__(
                             'No category characteristic "%s" value found.',
@@ -242,18 +284,19 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                 }
             }
         }
-        
+
         $validOfferStatuses = Mage::getSingleton('innobyte_emag_marketplace/source_offerStatus')
             ->toArray();
         if (!array_key_exists('status', $emagData)
-            || !in_array($emagData['status'], $validOfferStatuses)) {
+            || !in_array($emagData['status'], $validOfferStatuses)
+        ) {
             Mage::throwException(
                 $this->_getHelper()->__('Please choose eMAG offer status.')
             );
         }
-        
+
         if (array_key_exists('warranty', $emagData)) {
-            $emagData['warranty'] = (int) $emagData['warranty'];
+            $emagData['warranty'] = (int)$emagData['warranty'];
             if ($emagData['warranty'] < 0 || $emagData['warranty'] > 255) {
                 Mage::throwException(
                     $this->_getHelper()->__(
@@ -265,9 +308,10 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                 $emagData['warranty'] = null;
             }
         }
-        
+
         if (!array_key_exists('commission_type', $emagData)
-            || empty($emagData['commission_type'])) {
+            || empty($emagData['commission_type'])
+        ) {
             Mage::throwException(
                 $this->_getHelper()->__('Please choose eMAG commission type.')
             );
@@ -277,16 +321,17 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
         } catch (Innobyte_EmagMarketplace_Exception $ex) {
             Mage::throwException($this->_getHelper()->__($ex->getMessage()));
         }
-        
+
         if (!array_key_exists('commission_value', $emagData)) {
             Mage::throwException(
                 $this->_getHelper()->__('Please fill eMAG commission value.')
             );
         }
         if (Innobyte_EmagMarketplace_Model_Source_CommissionTypes::TYPE_PERCENTAGE == $commissionType) {
-            $emagData['commission_value'] = (int) $emagData['commission_value'];
+            $emagData['commission_value'] = (int)$emagData['commission_value'];
             if ($emagData['commission_value'] < 0
-                || $emagData['commission_value'] > 100) {
+                || $emagData['commission_value'] > 100
+            ) {
                 Mage::throwException(
                     $this->_getHelper()->__(
                         'Invalid eMAG commission value. Should be a percentage between 0 and 100.'
@@ -294,7 +339,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                 );
             }
         } else {
-            $emagData['commission_value'] = (float) $emagData['commission_value'];
+            $emagData['commission_value'] = (float)$emagData['commission_value'];
             if ($emagData['commission_value'] < 0) {
                 Mage::throwException(
                     $this->_getHelper()->__(
@@ -303,11 +348,12 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                 );
             }
         }
-        
+
         if (array_key_exists('handling_time', $emagData)) {
-            $emagData['handling_time'] = (int) $emagData['handling_time'];
+            $emagData['handling_time'] = (int)$emagData['handling_time'];
             if ($emagData['handling_time'] < 0
-                || $emagData['handling_time'] > 255) {
+                || $emagData['handling_time'] > 255
+            ) {
                 Mage::throwException(
                     $this->_getHelper()->__(
                         'Invalid eMAG handling time. Should be a real number equal to or greater than 0 and smaller than 255.'
@@ -318,7 +364,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                 $emagData['handling_time'] = null;
             }
         }
-        
+
         $date = null;
         if (array_key_exists('start_date', $emagData)) {
             $filterInput = new Zend_Filter_LocalizedToNormalized(
@@ -332,7 +378,7 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
             );
             $date = $filterInput->filter($emagData['start_date']);
             $date = $filterInternal->filter($date);
-            
+
             if ($date) {
                 try {
                     $zendDate = new Zend_Date($date, Varien_Date::DATE_INTERNAL_FORMAT);
@@ -343,7 +389,8 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
                 }
                 $now = new Zend_Date(null, Varien_Date::DATE_INTERNAL_FORMAT);
                 if (!$zendDate->isLater($now)
-                    || !$zendDate->isEarlier($now->addDay(61))) {
+                    || !$zendDate->isEarlier($now->addDay(61))
+                ) {
                     Mage::throwException(
                         $this->_getHelper()->__(
                             'Offer start date can be as far as 60 days in the future and cannot be earlier than tomorrow.'
@@ -357,10 +404,10 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
         } else {
             $emagData['start_date'] = null;
         }
-        
+
         $vatId = null;
         if (array_key_exists('vat_id', $emagData)) {
-            $vatId = (int) $emagData['vat_id'];
+            $vatId = (int)$emagData['vat_id'];
             $vats = Mage::getSingleton('innobyte_emag_marketplace/source_vat')
                 ->getIdsArray($storeId);
             if (!in_array($vatId, $vats)) {
@@ -390,9 +437,8 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
             );
         }
     }
-    
-    
-    
+
+
     /**
      * Add eMAG related mass actions to products grid.
      * Triggered on adminhtml_catalog_product_grid_prepare_massaction event.
@@ -404,19 +450,20 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
     public function addEmagProductMassActions(Varien_Event_Observer $observer)
     {
         $gridBlock = $observer->getEvent()->getBlock();
-        
+
         $storeId = $this->_getHelper()->getCurrStoreId();
         if (!($gridBlock instanceof Mage_Adminhtml_Block_Catalog_Product_Grid)
             || $storeId == Mage_Core_Model_App::ADMIN_STORE_ID
-            || !$this->_getHelper()->isExtensionEnabled($storeId)) {
+            || !$this->_getHelper()->isExtensionEnabled($storeId)
+        ) {
             return $this;
         }
-        
+
         $gridBlock->getMassactionBlock()->addItem(
             'emag_send_product_mass',
             array(
-                'label'=> $this->_getHelper()->__('Send eMAG product'),
-                'url'  => $gridBlock->getUrl(
+                'label' => $this->_getHelper()->__('Send eMAG product'),
+                'url' => $gridBlock->getUrl(
                     'adminhtml/emag_product/massSendProduct',
                     array('_current' => 1)
                 ),
@@ -425,8 +472,8 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
         $gridBlock->getMassactionBlock()->addItem(
             'emag_send_offer_mass',
             array(
-                'label'=> $this->_getHelper()->__('Send eMAG offer'),
-                'url'  => $gridBlock->getUrl(
+                'label' => $this->_getHelper()->__('Send eMAG offer'),
+                'url' => $gridBlock->getUrl(
                     'adminhtml/emag_product/massSendOffer',
                     array('_current' => 1)
                 ),
@@ -435,14 +482,69 @@ class Innobyte_EmagMarketplace_Model_Catalog_Product_Observer
         $gridBlock->getMassactionBlock()->addItem(
             'emag_deactivate_offer_mass',
             array(
-                'label'=> $this->_getHelper()->__('Deactivate eMAG offer'),
-                'url'  => $gridBlock->getUrl(
+                'label' => $this->_getHelper()->__('Deactivate eMAG offer'),
+                'url' => $gridBlock->getUrl(
                     'adminhtml/emag_product/massDeactivateOffer',
                     array('_current' => 1)
                 ),
             )
         );
-        
+
         return $this;
     }
+
+    /**
+     * Add eMAG custom columns to product grid
+     *  - core_block_abstract_prepare_layout_after
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Innobyte_EmagMarketplace_Model_Sales_Observer
+     */
+    public function addGridColumns(Varien_Event_Observer $observer)
+    {
+        $storeId = $this->_getHelper()->getCurrStoreId();
+        if (!$storeId) {
+            return $this;
+        }
+
+        $block = $observer->getBlock();
+        if ($block instanceof Mage_Adminhtml_Block_Catalog_Product_Grid) {
+            /* @var $block Mage_Adminhtml_Block_Catalog_Product_Grid */
+            $block->addColumnAfter(
+                'emag_is_synced',
+                array(
+                    'header' => 'eMAG Synced',
+                    'width' => '100px',
+                    'type' => 'options',
+                    'options' => Mage::getModel('innobyte_emag_marketplace/source_attribute_sync_status')->toOptionArray(),
+                    'index' => 'emag_is_synced',
+                ),
+                'status'
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add eMAG custom columns to product grid select
+     *  - catalog_product_collection_load_before
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Innobyte_EmagMarketplace_Model_Sales_Observer
+     */
+    public function addGridColumnsToSelect(Varien_Event_Observer $observer)
+    {
+        $storeId = $this->_getHelper()->getCurrStoreId();
+        if (!$storeId) {
+            return $this;
+        }
+
+        /** @var $collection Mage_Catalog_Model_Resource_Product_Collection */
+        $collection = $observer->getCollection();
+        $collection->addAttributeToSelect('emag_is_synced');
+
+        return $this;
+    }
+
 }

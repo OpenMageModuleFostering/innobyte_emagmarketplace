@@ -37,9 +37,11 @@ class Innobyte_EmagMarketplace_Model_Invoice_Pdf_Total_Voucher extends Mage_Sale
 
         $total = array();
         foreach ($vouchers as $voucher) {
+            $salePriceInclVat = $voucher['emag_sale_price'] + $voucher['emag_sale_price_vat'];
+
             $total[] = array(
                 'label' => $voucher['emag_voucher_name'] . ':',
-                'amount' => $this->getOrder()->formatPriceTxt($voucher['emag_sale_price']),
+                'amount' => $this->getOrder()->formatPriceTxt($salePriceInclVat),
                 'font_size' => $fontSize,
             );
         }

@@ -17,7 +17,7 @@ class Innobyte_EmagMarketplace_Model_System_Config_Backend_Prefix_Creditmemo
      *
      * @var array
      */
-    protected $_entityType = 'creditmemo';
+    protected $_entityType = 'emag_creditmemo';
 
     /**
      * Set prefix value

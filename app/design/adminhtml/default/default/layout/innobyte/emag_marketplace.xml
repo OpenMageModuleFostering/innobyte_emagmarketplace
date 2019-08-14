@@ -240,7 +240,7 @@
         </reference>
         <reference name="shipment_packaging">
             <action method="setTemplate">
-                <template>innobyte/emag_marketplace/sales/order/shipment/packaging/popup.phtml</template>
+                <template helper="innobyte_emag_marketplace/data/setTemplate"/>
             </action>
         </reference>
     </adminhtml_sales_order_shipment_new>
@@ -254,7 +254,7 @@
         </reference>
         <reference name="shipment_packaging">
             <action method="setTemplate">
-                <template>innobyte/emag_marketplace/sales/order/shipment/packaging/popup.phtml</template>
+                <template helper="innobyte_emag_marketplace/data/setTemplate"/>
             </action>
         </reference>
     </adminhtml_sales_order_shipment_view>
@@ -334,4 +334,30 @@
             <action method="setTemplate"><path>innobyte/emag_marketplace/catalog/product/edit.phtml</path></action>
         </reference>
     </adminhtml_catalog_product_edit>
+
+    <!-- add eMAG columns to sales order grid -->
+    <add_order_grid_column_handle>
+        <reference name="sales_order.grid">
+            <action method="addColumnAfter">
+                <columnId>emag_order_id</columnId>
+                <arguments module="sales" translate="header">
+                    <header>eMAG Order #</header>
+                    <index>emag_order_id</index>
+                    <type>text</type>
+                    <filter>innobyte_emag_marketplace/adminhtml_sales_order_grid_column_filter</filter>
+                    <renderer>innobyte_emag_marketplace/adminhtml_sales_order_grid_column_renderer</renderer>
+                    <width>100</width>
+                    <filter_index>emag_orders.emag_order_id</filter_index>
+                </arguments>
+                <after>real_order_id</after>
+            </action>
+        </reference>
+    </add_order_grid_column_handle>
+    <adminhtml_sales_order_grid>
+        <update handle="add_order_grid_column_handle" />
+    </adminhtml_sales_order_grid>
+    <adminhtml_sales_order_index>
+        <update handle="add_order_grid_column_handle" />
+    </adminhtml_sales_order_index>
+
 </layout>

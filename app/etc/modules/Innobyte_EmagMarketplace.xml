@@ -8,7 +8,6 @@
                 <Mage_Sales/>
                 <Mage_Catalog/>
                 <Mage_Customer/>
-                <Innobyte_Core/>
             </depends>
         </Innobyte_EmagMarketplace>
     </modules>

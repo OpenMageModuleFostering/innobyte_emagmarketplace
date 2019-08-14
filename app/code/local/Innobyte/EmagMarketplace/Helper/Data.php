@@ -17,6 +17,8 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
     const CONFIG_PATH = 'Innobyte_EmagMarketplace/';
     const CONFIG_PATH_GENERAL_SETTINGS = 'general_settings/';
     const CONFIG_PATH_API_SETTINGS = 'api_settings/';
+    const CONFIG_PATH_INVOICE_CREDITMEMO_SETTINGS = 'invoice_creditmemo_settings/';
+    const CONFIG_PATH_DEBUG_SETTINGS = 'debug_settings/';
     const CONFIG_PATH_SHIP_ORIGIN_EMAG_LOCALITY_ID = 'shipping/origin/emag_locality_id';
     const CONFIG_PATH_COURIER_ACCOUNT_ID = 'Innobyte_EmagMarketplace/shipping_settings/courier_account_id';
     const CONFIG_PATH_AWB_PDF_URL = 'Innobyte_EmagMarketplace/shipping_settings/awb_pdf_url';
@@ -53,7 +55,29 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
      */
     public function isDebug($storeId = null)
     {
-        return (bool)$this->getConfig(self::CONFIG_PATH_GENERAL_SETTINGS . 'debug', $storeId);
+        return (bool)$this->getConfig(self::CONFIG_PATH_DEBUG_SETTINGS . 'enabled', $storeId);
+    }
+
+    /**
+     * Check if curl ssl verify is disabled
+     *
+     * @param null $storeId
+     * @return bool
+     */
+    public function isSslVerifyDisabled($storeId = null)
+    {
+        return (bool)$this->getConfig(self::CONFIG_PATH_DEBUG_SETTINGS . 'curl_ssl_verify', $storeId);
+    }
+
+    /**
+     * Check if curl verbose mode is enabled
+     *
+     * @param null $storeId
+     * @return bool
+     */
+    public function isVerboseMode($storeId = null)
+    {
+        return (bool)$this->getConfig(self::CONFIG_PATH_DEBUG_SETTINGS . 'curl_verbose_mode', $storeId);
     }
 
     /**
@@ -132,7 +156,7 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
      */
     public function getApiPassword($storeId = null)
     {
-        return (string) $this->getConfig(self::CONFIG_PATH_API_SETTINGS . 'password', $storeId);
+        return (string)$this->getConfig(self::CONFIG_PATH_API_SETTINGS . 'password', $storeId);
     }
 
     /**
@@ -144,6 +168,17 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
     public function getClientCode($storeId = null)
     {
         return (string)$this->getConfig(self::CONFIG_PATH_API_SETTINGS . 'code', $storeId);
+    }
+
+    /**
+     * Check if third party invoices should be used
+     *
+     * @param null $storeId
+     * @return bool
+     */
+    public function useThirdPartyInvoices($storeId = null)
+    {
+        return (bool)$this->getConfig(self::CONFIG_PATH_INVOICE_CREDITMEMO_SETTINGS . 'use_third_party_invoices', $storeId);
     }
 
     /**
@@ -207,8 +242,7 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
         return $returnValue;
     }
 
-    
-    
+
     /**
      * Retrieve current store scope.
      *
@@ -217,18 +251,22 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
     public function getCurrStoreId()
     {
         $returnValue = Mage::app()->getStore()->getId();
-        $store = Mage::app()->getRequest()->getParam('store');
-        if ($store && Mage::app()->getStore($store)->getStoreId()) {
-            $returnValue = Mage::app()->getStore($store)->getStoreId();
+        if (Mage::app()->isSingleStoreMode()) {
+            $returnValue = Mage::app()->getStore(true)->getId();
+        } else {
+            $store = Mage::app()->getRequest()->getParam('store');
+            if (($store && $store != 'undefined') && Mage::app()->getStore($store)->getStoreId()) {
+                $returnValue = Mage::app()->getStore($store)->getStoreId();
+            }
         }
+
         return $returnValue;
     }
 
-    
-    
+
     /**
      * Perform different checks to see if product action is eligible to continue.
-     * 
+     *
      * @param Mage_Catalog_Model_Product $product
      * @return bool
      */
@@ -241,12 +279,11 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
             && ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_SIMPLE
                 || $product->isConfigurable()));
     }
-    
-    
-    
+
+
     /**
      * Checks api settings to be configured and extension to be enabled.
-     * 
+     *
      * @param int|Mage_Core_Model_Store $storeId
      * @return bool
      */
@@ -258,9 +295,8 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
             && strlen($this->getApiPassword($storeId))
             && strlen($this->getClientCode($storeId)));
     }
-    
-    
-    
+
+
     /**
      * Check if limited stock flag is enabled to be taken into consideration.
      *
@@ -271,9 +307,8 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
     {
         return (bool)$this->getConfig(self::CONFIG_PATH_GENERAL_SETTINGS . 'enable_limited_stock', $storeId);
     }
-    
-    
-    
+
+
     /**
      * Retrieve qty limit under which product, if "in stock", should be considered as "limited stock".
      *
@@ -294,10 +329,10 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
      */
     public function getShipOriginEmagLocalityId($storeId = null)
     {
-        return (int) Mage::getStoreConfig(self::CONFIG_PATH_SHIP_ORIGIN_EMAG_LOCALITY_ID, $storeId);
+        return (int)Mage::getStoreConfig(self::CONFIG_PATH_SHIP_ORIGIN_EMAG_LOCALITY_ID, $storeId);
     }
-    
-    
+
+
     /**
      * Check if real stock qty shoud be sent to eMAG.
      *
@@ -308,14 +343,13 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
     {
         return (bool)$this->getConfig(self::CONFIG_PATH_GENERAL_SETTINGS . 'send_stock_qty', $storeId);
     }
-    
-    
-    
+
+
     /**
      * Try to retrieve Magento region id based on eMAG region name.
-     * "Try" means that exact match is searched, otherwise the region with a 
+     * "Try" means that exact match is searched, otherwise the region with a
      * single letter difference, if only one is found.
-     * 
+     *
      * @param string $regionName
      * @param string $countryCode
      * @return Mage_Directory_Model_Region|null can be null if no matching was found.
@@ -334,11 +368,11 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
             ->load();
         if (!$collection->getSize()) {
             return null;
-        }        
+        }
         $shortest = -1; // shortest levenshtein dist found.
         $shortestCnt = 1; // how many had the shortest distance.
         $closest = null; // the region model that has the shortest distance
-        
+
         foreach ($collection as $region) {
             $regName = $this->getAsciiTranslitVal($region->getName());
             if ($regionName == $regName) {
@@ -354,11 +388,11 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
                         $shortestCnt = 1;
                     }
                     // set the closest match, and shortest distance
-                    $closest  = $region;
+                    $closest = $region;
                     $shortest = $lev;
                 }
             }
-        }        
+        }
         if (0 == $shortest && $closest->getId() > 0) { // found exact match
             return $closest;
         } elseif (1 == $shortest && 1 == $shortestCnt && $closest->getId() > 0) {
@@ -371,7 +405,6 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
     }
 
 
-    
     /**
      * Retrieve ASCII/TRANSLIT value of a string.
      * @param string $string
@@ -389,9 +422,8 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
         }
         return $returnValue;
     }
-    
-    
-    
+
+
     /**
      * Retrieve courier account id.
      *
@@ -412,5 +444,30 @@ class Innobyte_EmagMarketplace_Helper_Data extends Mage_Core_Helper_Data
     public function getAwbPdfUrl($storeId = null)
     {
         return trim(Mage::getStoreConfig(self::CONFIG_PATH_AWB_PDF_URL, $storeId));
+    }
+
+    /**
+     * Template conflict fix while eMAG Marketplace module is installed
+     *
+     * @return string
+     */
+    public function setTemplate()
+    {
+        $block = Mage::app()->getLayout()->getBlock('shipment_packaging');
+        $template = $block->getTemplate();
+
+        /** @var $shipment Mage_Sales_Model_Order_Shipment */
+        $shipment = Mage::registry('current_shipment');
+        $shippingCarrier = $shipment->getOrder()->getShippingCarrier();
+
+        if ($shippingCarrier && $shippingCarrier->getCarrierCode() == 'innobytefancourier') {
+            $template = 'innobyte/fancourier/sales/order/shipment/packaging/popup.phtml';
+        } elseif ($shipment->getOrder()->getEmagOrderId()
+            && Innobyte_EmagMarketplace_Model_Shipping_Carrier_Emag::EMAG_SHIPPING == $shippingCarrier->getCarrierCode()
+        ) {
+            $template = 'innobyte/emag_marketplace/sales/order/shipment/packaging/popup.phtml';
+        }
+
+        return $template;
     }
 }

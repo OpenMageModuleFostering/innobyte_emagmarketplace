@@ -41,8 +41,11 @@ class Innobyte_EmagMarketplace_Model_Sales_Quote_Address_Total_Voucher
         }
 
         foreach ($vouchers as $voucher) {
-            $emagVouchersValue += $voucher['emag_sale_price'];
-            $baseEmagVouchersValue += $voucher['base_emag_sale_price'];
+            $salePriceInclVat = $voucher['emag_sale_price'] + $voucher['emag_sale_price_vat'];
+            $baseSalePriceInclVat = $voucher['base_emag_sale_price'] + $voucher['base_emag_sale_price_vat'];
+
+            $emagVouchersValue += $salePriceInclVat;
+            $baseEmagVouchersValue += $baseSalePriceInclVat;
         }
 
         $grandTotal = $address->getGrandTotal() + $emagVouchersValue;

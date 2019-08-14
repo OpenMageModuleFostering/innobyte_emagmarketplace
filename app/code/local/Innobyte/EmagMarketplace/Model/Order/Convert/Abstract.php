@@ -374,7 +374,7 @@ abstract class Innobyte_EmagMarketplace_Model_Order_Convert_Abstract extends Var
      */
     public function reReadEmagOrder(Mage_Sales_Model_Order $sales)
     {
-        Mage::register('is_emag_order_updated', true);
+        $sales->setData('is_emag_order_updated', true);
 
         /** @var $store Mage_Core_Model_Store */
         $store = $sales->getStore();

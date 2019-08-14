@@ -17,7 +17,7 @@ class Innobyte_EmagMarketplace_Model_System_Config_Backend_Prefix_Invoice
      *
      * @var array
      */
-    protected $_entityType = 'invoice';
+    protected $_entityType = 'emag_invoice';
 
     /**
      * Set prefix value

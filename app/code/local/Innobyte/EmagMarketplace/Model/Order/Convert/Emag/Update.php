@@ -116,7 +116,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag_Update
         }
         $state = $this->getStatusState($status);
 
-        $this->getOrder()->setState($state);
+        $this->getOrder()->setData('state', $state);
         $this->getOrder()->setStatus($status);
 
         return $this;
@@ -185,7 +185,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag_Update
                     );
                 }
 
-                $quantity = (float)$emagProduct['quantity'];
+                $quantity = (float)$emagProduct['quantity'] + $orderItem->getQtyRefunded();
                 $vat = (float)$emagProduct['vat'];
 
                 $price = (float)$emagProduct['sale_price'];
@@ -215,6 +215,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag_Update
                     ->setQtyOrdered($quantity)
                     ->setName($_product->getName())
                     ->setSku($_product->getSku())
+                    ->setWeight($_product->getWeight())
                     ->setPrice($price)
                     ->setBasePrice($basePrice)
                     ->setOriginalPrice($originalPrice)
@@ -228,6 +229,16 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag_Update
                     ->setBasePriceInclTax($basePriceInclTax)
                     ->setRowTotalInclTax($rowTotalInclTax)
                     ->setBaseTotalInclTax($baseRowTotalInclTax)
+                    ->setGiftMessageAvailable(0)
+                    ->setBaseWeeeTaxAppliedAmount(0)
+                    ->setBaseWeeeTaxAppliedRowAmnt(0)
+                    ->setWeeeTaxAppliedAmount(0)
+                    ->setWeeeTaxAppliedRowAmount(0)
+                    ->setWeeeTaxApplied(serialize(array()))
+                    ->setWeeeTaxDisposition(0)
+                    ->setWeeeTaxRowDisposition(0)
+                    ->setBaseWeeeTaxDisposition(0)
+                    ->setBaseWeeeTaxRowDisposition(0)
                     ->setEmagDetails(json_encode($emagProduct['details']))
                     ->setEmagCreated($emagProduct['created'])
                     ->setEmagModified($emagProduct['modified']);

@@ -257,8 +257,11 @@ class Innobyte_EmagMarketplace_Model_Sales_Observer
             return $this;
         }
 
-        // for edit mode order state and status is not available; apply it
-        if (!$order->getState()) {
+        // apply state/status if not set; on edit mode change state/status if status is new
+        if (!$order->getState()
+            || ($order->getStatus() == Innobyte_EmagMarketplace_Model_Order_Convert_Abstract::STATUS_NEW
+                && $order->getRelationParentId())
+        ) {
             $order->setState(
                 Mage_Sales_Model_Order::STATE_PROCESSING,
                 Innobyte_EmagMarketplace_Model_Order_Convert_Abstract::STATUS_IN_PROGRESS
@@ -276,10 +279,10 @@ class Innobyte_EmagMarketplace_Model_Sales_Observer
             );
         }
 
-        //TODO: check if status is set correctly after performing a magento default action; if not set is manually
-        //if (!in_array($order->getStatus(), $model->getEmagOrderStatuses())) {
-        //    $order->setStatus($order->getOrigData('status'));
-        //}
+        // check if status is set correctly after performing a magento default action; if not set is manually
+        if (!in_array($order->getStatus(), $model->getEmagOrderStatuses())) {
+            $order->setStatus($order->getOrigData('status'));
+        }
 
         if (
             !$order->isCanceled()
@@ -291,8 +294,11 @@ class Innobyte_EmagMarketplace_Model_Sales_Observer
                 0 == $order->getBaseGrandTotal()
                 || $order->canCreditmemo()
             ) {
-                $emagOrderStatus = $this->getConfig()
-                    ->getStateDefaultStatus(Mage_Sales_Model_Order::STATE_COMPLETE);
+                if (in_array($order->getStatus(), $model->getEmagOrderStatuses())) {
+                    $emagOrderStatus = $order->getStatus();
+                } else {
+                    $emagOrderStatus = Innobyte_EmagMarketplace_Model_Order_Convert_Abstract::STATUS_FINALIZED;
+                }
             } /**
              * Order can be closed just in case when we have refunded amount.
              * In case of "0" grand total order checking ForcedCanCreditmemo flag
@@ -359,9 +365,11 @@ class Innobyte_EmagMarketplace_Model_Sales_Observer
                 ->saveVoucherData($order);
         }
 
-        // update eMAG order only if state is processing
-        if ($order->getState() == Mage_Sales_Model_Order::STATE_PROCESSING) {
-            if (!Mage::registry('is_emag_order_updated')) {
+        // update eMAG order only if state is processing or fully refunded
+        if ($order->getState() == Mage_Sales_Model_Order::STATE_PROCESSING
+            || $order->getStatus() == Innobyte_EmagMarketplace_Model_Order_Convert_Abstract::STATUS_RETURNED
+        ) {
+            if (!$order->getData('is_emag_order_updated')) {
                 $this->_updateEmagOrder($order);
             }
         }
@@ -904,7 +912,7 @@ class Innobyte_EmagMarketplace_Model_Sales_Observer
 
             $message = $this->_getHelper()->__('This action will update order in eMAG Marketplace. Are you sure?');
             if ($model->canPrepare($order)) {
-                $url = $block->getUrl('*/*/emagprepare');
+                $url = $block->getUrl('*/*/emagPrepare');
                 $block->addButton(
                     'emag_prepared',
                     array(
@@ -915,8 +923,20 @@ class Innobyte_EmagMarketplace_Model_Sales_Observer
                 );
             }
 
+            if ($model->canFinalize($order)) {
+                $url = $block->getUrl('*/*/emagFinalize');
+                $block->addButton(
+                    'emag_finalized',
+                    array(
+                        'label' => $this->_getHelper()->__('eMAG Finalized'),
+                        'onclick' => "confirmSetLocation('" . $message . "', '" . $url . "')",
+                        'class' => 'go'
+                    )
+                );
+            }
+
             if ($model->canCancel($order)) {
-                $url = $block->getUrl('*/*/emagcancel');
+                $url = $block->getUrl('*/*/emagCancel');
                 $block->addButton(
                     'emag_canceled',
                     array(
@@ -926,6 +946,118 @@ class Innobyte_EmagMarketplace_Model_Sales_Observer
                     )
                 );
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add eMAG custom columns to sales order grid select
+     *  - sales_order_grid_collection_load_before
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Innobyte_EmagMarketplace_Model_Sales_Observer
+     */
+    public function addGridColumnsToSelect(Varien_Event_Observer $observer)
+    {
+        $collection = $observer->getOrderGridCollection();
+        $collection->getSelect()->joinLeft(
+            array(
+                'emag_orders' => Mage::getSingleton('core/resource')->getTableName('innobyte_emag_marketplace/sales_order')
+            ),
+            'main_table.entity_id = emag_orders.entity_id',
+            array(
+                'emag_orders.emag_order_id'
+            ),
+            null
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add eMAG mass actions to sales order grid on:
+     *  - core_block_abstract_prepare_layout_before
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Innobyte_EmagMarketplace_Model_Sales_Observer
+     */
+    public function addOrderMassActions(Varien_Event_Observer $observer)
+    {
+        $block = $observer->getEvent()->getBlock();
+        if ($block instanceof Mage_Adminhtml_Block_Widget_Grid_Massaction
+            && $block->getRequest()->getControllerName() == 'sales_order'
+        ) {
+            $block->addItem('emag_prepared', array(
+                'label' => $this->_getHelper()->__('eMAG Prepared'),
+                'url' => $block->getUrl('*/*/massEmagPrepare'),
+            ));
+            $block->addItem('emag_finalized', array(
+                'label' => $this->_getHelper()->__('eMAG Finalized'),
+                'url' => $block->getUrl('*/*/massEmagFinalize'),
+            ));
+            $block->addItem('emag_canceled', array(
+                'label' => $this->_getHelper()->__('eMAG Cancel'),
+                'url' => $block->getUrl('*/*/massEmagCancel'),
+            ));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set increment id for invoice on:
+     *  - sales_order_invoice_save_before
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Innobyte_EmagMarketplace_Model_Sales_Observer
+     */
+    public function invoiceBeforeSave(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Sales_Model_Order_Invoice $invoice */
+        $invoice = $observer->getEvent()->getInvoice();
+
+        /** @var Mage_Sales_Model_Order $order */
+        $order = $invoice->getOrder();
+        if (!$order->getEmagOrderId()) {
+            return $this;
+        }
+
+        if (!$invoice->getIncrementId()) {
+            /* @var $entityType Mage_Eav_Model_Entity_Type */
+            $entityType = Mage::getModel('eav/entity_type')
+                ->loadByCode(Innobyte_EmagMarketplace_Model_Sales_Invoice::ENTITY_TYPE_CODE_INVOICE);
+
+            $invoice->setIncrementId($entityType->fetchNewIncrementId($invoice->getStoreId()));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set increment id for creditmemo on:
+     *  - sales_order_creditmemo_save_before
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Innobyte_EmagMarketplace_Model_Sales_Observer
+     */
+    public function creditmemoBeforeSave(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Sales_Model_Order_Creditmemo $creditmemo */
+        $creditmemo = $observer->getEvent()->getCreditmemo();
+
+        /** @var Mage_Sales_Model_Order $order */
+        $order = $creditmemo->getOrder();
+        if (!$order->getEmagOrderId()) {
+            return $this;
+        }
+
+        if (!$creditmemo->getIncrementId()) {
+            /* @var $entityType Mage_Eav_Model_Entity_Type */
+            $entityType = Mage::getModel('eav/entity_type')
+                ->loadByCode(Innobyte_EmagMarketplace_Model_Sales_Invoice::ENTITY_TYPE_CODE_CREDITMEMO);
+
+            $creditmemo->setIncrementId($entityType->fetchNewIncrementId($creditmemo->getStoreId()));
         }
 
         return $this;

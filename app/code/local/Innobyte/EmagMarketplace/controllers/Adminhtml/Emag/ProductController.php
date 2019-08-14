@@ -172,6 +172,12 @@ class Innobyte_EmagMarketplace_Adminhtml_Emag_ProductController
                 $emagProduct
                     ->setIsSynced(Innobyte_EmagMarketplace_Model_Product::IS_SYNCED)
                     ->save();
+
+                Mage::getResourceSingleton('catalog/product_action')->updateAttributes(
+                    array($productId),
+                    array('emag_is_synced' => Innobyte_EmagMarketplace_Model_Product::IS_SYNCED),
+                    $emagProduct->getStoreId()
+                );
             }
             if (!count($apiResp->getMessages())) { // check for warnings
                 if ('product' === $sendType) {
@@ -311,6 +317,12 @@ class Innobyte_EmagMarketplace_Adminhtml_Emag_ProductController
                     $emagProd
                         ->setIsSynced(Innobyte_EmagMarketplace_Model_Product::IS_SYNCED)
                         ->save();
+
+                    Mage::getResourceSingleton('catalog/product_action')->updateAttributes(
+                        array($prodId),
+                        array('emag_is_synced' => Innobyte_EmagMarketplace_Model_Product::IS_SYNCED),
+                        $storeId
+                    );
                 }
                 $successfullySentIds[] = $prodId;
             }

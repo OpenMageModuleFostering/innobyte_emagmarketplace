@@ -11,6 +11,7 @@ class Innobyte_EmagMarketplace_Block_Adminhtml_Catalog_Product_Edit_Tab_EmagMark
     extends Mage_Adminhtml_Block_Widget_Form
     implements Mage_Adminhtml_Block_Widget_Tab_Interface
 {
+
     /**
      * Current store scope.
      *
@@ -176,7 +177,17 @@ class Innobyte_EmagMarketplace_Block_Adminhtml_Catalog_Product_Edit_Tab_EmagMark
             && ($descElem = $form->getElement('description'))) {
             $descElem->setValue($this->getMageProduct()->getDescription());
         }
-        
+
+        $priceElem = $form->getElement('price');
+        if (!is_null($this->getEmagProduct()->getPrice())) {
+            $priceElem->setValue(number_format($this->getEmagProduct()->getPrice(), 2));
+        }
+
+        $specialPriceElem = $form->getElement('special_price');
+        if (!is_null($this->getEmagProduct()->getSpecialPrice())) {
+            $specialPriceElem->setValue(number_format($this->getEmagProduct()->getSpecialPrice(), 2));
+        }
+
         $this->setForm($form);
 
         $this->setChild(
@@ -566,6 +577,37 @@ class Innobyte_EmagMarketplace_Block_Adminhtml_Catalog_Product_Edit_Tab_EmagMark
                 //]]>
             </script>'
         );
+
+
+        $fieldset->addField(
+            'price',
+            'text',
+            array(
+                'label'    => $this->__('Price') . ':',
+                'title'    => $this->__('Price'),
+                'name'     => 'price',
+                'required' => false,
+                'note'     => $this->__(
+                    'eMAG Marketplace sell price. Leave blank to use default Magento Price. <br /> <strong>Note</strong>: <span style="color: red">VAT is calculated based on <a href="%s">Tax->Calculation Settings->Catalog Prices</a>.</span>',
+                    $this->getUrl('adminhtml/system_config/edit/section/tax')
+                ),
+            )
+        );
+
+        $fieldset->addField(
+            'special_price',
+            'text',
+            array(
+                'label'    => $this->__('Special Price') . ':',
+                'title'    => $this->__('Special Price'),
+                'name'     => 'special_price',
+                'required' => false,
+                'note'     => $this->__(
+                    'eMAG Marketplace special price. Leave blank to use default Magento Special Price. <br /> <strong>Note</strong>: <span style="color: red">VAT is calculated based on <a href="%s">Tax->Calculation Settings->Catalog Prices</a>.</span>',
+                    $this->getUrl('adminhtml/system_config/edit/section/tax')
+                ),
+            )
+        );
         
         $optVat = Mage::getSingleton('innobyte_emag_marketplace/source_vat')
             ->toOptionArray($this->_storeId);
@@ -755,4 +797,5 @@ class Innobyte_EmagMarketplace_Block_Adminhtml_Catalog_Product_Edit_Tab_EmagMark
         }
         return false;
     }
+
 }

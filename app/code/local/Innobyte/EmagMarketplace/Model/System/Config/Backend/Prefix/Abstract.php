@@ -79,7 +79,7 @@ class Innobyte_EmagMarketplace_Model_System_Config_Backend_Prefix_Abstract exten
         $storeCode = Mage::app()->getRequest()->getParam('store');
 
         // exit if invoice prefix is not defined
-        if (!$prefix) {
+        if (!$prefix && !$this->isValueChanged()) {
             return $this;
         }
 
@@ -96,6 +96,11 @@ class Innobyte_EmagMarketplace_Model_System_Config_Backend_Prefix_Abstract exten
         $store = Mage::getModel('core/store')->load($storeCode, 'code');
         if (!$store->getId()) {
             return $this;
+        }
+
+        // set store id as value if prefix is empty
+        if (!$prefix && $this->isValueChanged()) {
+            $prefix = $store->getId();
         }
 
         try {

@@ -212,17 +212,35 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
 
             $order = $this->getOrder();
 
+            Mage::dispatchEvent(
+                'innobyte_emag_marketplace_emag_order_save_before',
+                array(
+                    'order' => $order
+                )
+            );
+
             $transaction->addObject($order);
 
             $transaction->addCommitCallback(array($order, 'place'));
             $transaction->addCommitCallback(array($order, 'save'));
             $transaction->save();
 
+            Mage::dispatchEvent(
+                'innobyte_emag_marketplace_emag_order_save_after',
+                array(
+                    'order' => $order
+                )
+            );
+
             $this->acknowledgeEmagOrder($this->getOrder());
 
         } catch (Innobyte_EmagMarketplace_Exception $e) {
+            $this->_restoreItemQty();
+
             throw new Innobyte_EmagMarketplace_Exception($e->getMessage());
         } catch (Exception $e) {
+            $this->_restoreItemQty();
+
             throw new Innobyte_EmagMarketplace_Exception($e->getMessage());
         }
     }
@@ -259,7 +277,9 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
             ->setState(Mage_Sales_Model_Order::STATE_NEW)
             ->setStatus($status)
             ->setEmagOrderId($emagOrderId)
-            ->setEmagOrderDate($emagOrderDate);
+            ->setEmagOrderDate($emagOrderDate)
+            ->setCreatedAt($this->_getGmtDate($emagOrderDate))
+            ->setUpdatedAt($this->_getGmtDate($emagOrderDate));
 
         return $this;
     }
@@ -386,6 +406,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
                     ->setQtyOrdered($quantity)
                     ->setName($_product->getName())
                     ->setSku($_product->getSku())
+                    ->setWeight($_product->getWeight())
                     ->setPrice($price)
                     ->setBasePrice($basePrice)
                     ->setOriginalPrice($originalPrice)
@@ -399,12 +420,26 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
                     ->setBasePriceInclTax($basePriceInclTax)
                     ->setRowTotalInclTax($rowTotalInclTax)
                     ->setBaseTotalInclTax($baseRowTotalInclTax)
+                    ->setGiftMessageAvailable(0)
+                    ->setBaseWeeeTaxAppliedAmount(0)
+                    ->setBaseWeeeTaxAppliedRowAmnt(0)
+                    ->setWeeeTaxAppliedAmount(0)
+                    ->setWeeeTaxAppliedRowAmount(0)
+                    ->setWeeeTaxApplied(serialize(array()))
+                    ->setWeeeTaxDisposition(0)
+                    ->setWeeeTaxRowDisposition(0)
+                    ->setBaseWeeeTaxDisposition(0)
+                    ->setBaseWeeeTaxRowDisposition(0)
                     ->setEmagDetails(json_encode($emagProduct['details']))
                     ->setEmagCreated($emagProduct['created'])
-                    ->setEmagModified($emagProduct['modified']);
+                    ->setEmagModified($emagProduct['modified'])
+                    ->setCreatedAt($this->_getGmtDate($emagProduct['created']))
+                    ->setUpdatedAt($this->_getGmtDate($emagProduct['modified']));
 
                 $this->getOrder()
                     ->addItem($orderItem);
+
+                $this->_registerItemSale($orderItem);
 
                 $subTotal += $rowTotal;
                 $baseSubTotal += $baseRowTotal;
@@ -468,8 +503,8 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
                 }
                 $vouchers[] = $voucher;
 
-                $salePrice = $emagVoucher['sale_price'];
-                $voucherDiscount += $salePrice;
+                $salePriceInclVat = $emagVoucher['sale_price'] + $emagVoucher['sale_price_vat'];
+                $voucherDiscount += $salePriceInclVat;
             }
 
             $grandTotal = $this->getOrder()->getGrandTotal() + $voucherDiscount;
@@ -606,27 +641,42 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
      * Prepare shipping
      *
      * @return Innobyte_EmagMarketplace_Model_Order_Convert_Emag
+     * @throws Innobyte_EmagMarketplace_Exception
      */
     protected function _prepareShipping()
     {
-        $shippingAmount = $this->getEmagOrder('shipping_tax');
-        $baseShippingAmount = $this->_convertPriceToBaseCurrency($shippingAmount);
+        try {
+            $shippingAmount = $this->getEmagOrder('shipping_tax');
+            $baseShippingAmount = $this->_convertPriceToBaseCurrency($shippingAmount);
 
-        $grandTotal = $this->getOrder()->getGrandTotal() + $shippingAmount;
-        $baseGrandTotal = $this->getOrder()->getBaseGrandTotal() + $baseShippingAmount;
+            $grandTotal = $this->getOrder()->getGrandTotal() + $shippingAmount;
+            $baseGrandTotal = $this->getOrder()->getBaseGrandTotal() + $baseShippingAmount;
 
-        $rateResult = Mage::getModel('innobyte_emag_marketplace/shipping_carrier_emag')
-            ->collectRates(null);
-        if (is_object($rateResult)) {
-            $rate = current($rateResult->getAllRates());
+            /** @var $carrier Innobyte_EmagMarketplace_Model_Shipping_Carrier_Emag */
+            $carrier = Mage::getModel('innobyte_emag_marketplace/shipping_carrier_emag');
+            /** @var $request Mage_Shipping_Model_Rate_Request */
+            $request = Mage::getModel('shipping/rate_request');
+            $rates = $carrier->collectRates($request);
+
+            if ($rates) {
+                $rate = current($rates->getAllRates());
+                $this->getOrder()
+                    ->setShippingMethod($rate->getCarrier() . '_' . $rate->getMethod())
+                    ->setShippingDescription(trim($rate->getCarrierTitle() . ' - ' . $rate->getMethodTitle(), '-'));
+            }
+
+            $this->getOrder()
+                ->setShippingAmount($shippingAmount)
+                ->setBaseShippingAmount($baseShippingAmount)
+                ->setGrandTotal($grandTotal)
+                ->setBaseGrandTotal($baseGrandTotal);
+        } catch (Exception $e) {
+            throw new Innobyte_EmagMarketplace_Exception(
+                $this->getHelper()->__(
+                    'Unable to apply shipping method. ERROR: %s', $e->getMessage()
+                )
+            );
         }
-        $this->getOrder()
-            ->setShippingMethod($rate->getCarrier() . '_' . $rate->getMethod())
-            ->setShippingAmount($shippingAmount)
-            ->setShippingDescription(trim($rate->getCarrierTitle() . ' - ' . $rate->getMethodTitle(), '-'))
-            ->setBaseShippingAmount($baseShippingAmount)
-            ->setGrandTotal($grandTotal)
-            ->setBaseGrandTotal($baseGrandTotal);
 
         return $this;
     }
@@ -694,20 +744,30 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
      * @param float $price
      * @param bool $round
      * @return float
+     * @throws Innobyte_EmagMarketplace_Exception
      */
     protected function _convertPriceToBaseCurrency($price, $round = true)
     {
-        $baseCurrency = $this->getBaseCurrency()->getCode();
-        $currentCurrency = $this->getCurrentCurrency()->getCode();
+        try {
+            $baseCurrency = $this->getBaseCurrency()->getCode();
+            $currentCurrency = $this->getCurrentCurrency()->getCode();
 
-        $rates = $this->_getCurrencyRates($baseCurrency);
-        $price = $price / $rates[$currentCurrency];
+            $rates = $this->_getCurrencyRates($baseCurrency);
+            $currencyRate = 1;
+            if (!empty($rates)){
+                $currencyRate = $rates[$currentCurrency];
+            }
 
-        if ($round) {
-            return $this->getStore()->roundPrice($price);
+            $price = $price / $currencyRate;
+
+            if ($round) {
+                return $this->getStore()->roundPrice($price);
+            }
+
+            return $price;
+        } catch (Innobyte_EmagMarketplace_Exception $e) {
+            throw new Innobyte_EmagMarketplace_Exception('Invalid currency settings. Please check you currency rates.');
         }
-
-        return $price;
     }
 
     /**
@@ -739,6 +799,27 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
     }
 
     /**
+     * Decrease magento stocks for current item
+     *
+     * @param $item
+     */
+    private function _registerItemSale(Mage_Sales_Model_Order_Item $item)
+    {
+        Mage::getSingleton('cataloginventory/stock')->registerItemSale($item);
+    }
+
+    /**
+     * Restore order item quantities
+     */
+    private function _restoreItemQty()
+    {
+        /** @var $item Mage_Sales_Model_Order_Item */
+        foreach ($this->getOrder()->getAllItems() as $item) {
+            Mage::getSingleton('cataloginventory/stock')->backItemQty($item->getProductId(), $item->getQtyOrdered());
+        }
+    }
+
+    /**
      * Acknowledge eMAG order
      *
      * @param Mage_Sales_Model_Order $order
@@ -765,6 +846,23 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
         $this->reReadEmagOrder($order);
 
         return $this;
+    }
+
+    /**
+     * Get GMT date
+     *
+     * @param $time
+     * @return bool|string
+     */
+    protected function _getGmtDate($time)
+    {
+        $timezone = new DateTimeZone(
+            Mage::app()->getStore($this->getOrder()->getStore())
+                ->getConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE)
+        );
+        $date = new DateTime($time, $timezone);
+
+        return date('Y-m-d H:i:s', $date->getTimestamp());
     }
 
 }

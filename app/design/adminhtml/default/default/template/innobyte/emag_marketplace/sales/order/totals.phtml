@@ -9,7 +9,11 @@
             <?php echo $helper->getFormattedVoucherLabel($voucher['emag_voucher_name']) ?>
         </td>
         <td>
-            <?php echo $this->displayPrices($voucher['base_emag_sale_price'], $voucher['emag_sale_price']); ?>
+            <?php
+                $baseSalePriceInclVat = $voucher['base_emag_sale_price'] + $voucher['base_emag_sale_price_vat'];
+                $salePriceInclVat = $voucher['emag_sale_price'] + $voucher['emag_sale_price_vat'];
+            ?>
+            <?php echo $this->displayPrices($baseSalePriceInclVat, $salePriceInclVat) ?>
         </td>
     </tr>
     <?php endforeach ?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Handles product api related operations.
  *
@@ -6,7 +7,6 @@
  * @package  Innobyte_EmagMarketplace
  * @author   Bogdan Constantinescu <bogdan.constantinescu@innobyte.com>
  */
-
 class Innobyte_EmagMarketplace_Model_Api_Product
     extends Innobyte_EmagMarketplace_Model_Api_Abstract
 {
@@ -14,7 +14,7 @@ class Innobyte_EmagMarketplace_Model_Api_Product
      * Product resource name
      */
     const PRODUCT_RESOURCE_NAME = 'product_offer';
-    
+
     /**
      * Default wharehouse id.
      */
@@ -26,16 +26,15 @@ class Innobyte_EmagMarketplace_Model_Api_Product
      * @var Innobyte_EmagMarketplace_Model_Product
      */
     protected $_emagProduct;
-        
+
     /**
      * Flag that indicates that whole product data should be sent.
      *
      * @var Innobyte_EmagMarketplace_Model_Product
      */
     protected $_sendProduct = true;
-        
-    
-    
+
+
     /**
      * Read PRODUCT resource
      *
@@ -46,8 +45,7 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         throw new Innobyte_EmagMarketplace_Exception('Not implemented');
     }
 
-    
-    
+
     /**
      * Save PRODUCT resource
      * Set eMAG product previous to call this method with #setEmagProduct()
@@ -68,9 +66,8 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         }
         return $this->_makeApiCall();
     }
-    
-    
-    
+
+
     /**
      * Count PRODUCT resource
      *
@@ -81,8 +78,7 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         throw new Innobyte_EmagMarketplace_Exception('Not implemented');
     }
 
-    
-    
+
     /**
      * Acknowledge PRODUCT resource
      *
@@ -93,8 +89,7 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         throw new Innobyte_EmagMarketplace_Exception('Not implemented');
     }
 
-    
-    
+
     /**
      * Get resource name
      *
@@ -104,9 +99,8 @@ class Innobyte_EmagMarketplace_Model_Api_Product
     {
         return self::PRODUCT_RESOURCE_NAME;
     }
-    
-    
-    
+
+
     /**
      * Save whole product.
      *
@@ -115,12 +109,11 @@ class Innobyte_EmagMarketplace_Model_Api_Product
      */
     public function saveProduct()
     {
-       $this->_sendProduct = true;
-       return $this->save();
+        $this->_sendProduct = true;
+        return $this->save();
     }
-    
-    
-    
+
+
     /**
      * Save product offer.
      *
@@ -129,12 +122,11 @@ class Innobyte_EmagMarketplace_Model_Api_Product
      */
     public function saveOffer()
     {
-       $this->_sendProduct = false;
-       return $this->save();
+        $this->_sendProduct = false;
+        return $this->save();
     }
-    
-    
-    
+
+
     /**
      * Handle product saving.
      *
@@ -144,7 +136,7 @@ class Innobyte_EmagMarketplace_Model_Api_Product
     public function _getProductSavingData()
     {
         $returnValue = array();
-        
+
         // for configurable send all child products
         $mageProduct = $this->getEmagProduct()->getMagentoProduct();
         if (!is_null($mageProduct) && $mageProduct->isConfigurable()) {
@@ -160,10 +152,11 @@ class Innobyte_EmagMarketplace_Model_Api_Product
                 )->loadByProdIdAndStore(
                     $childId,
                     $this->getEmagProduct()->getStoreId()
-                );                
+                );
                 try {
                     if ($childEmagProduct->getId()
-                        && $childEmagProduct->getCategoryId() != $this->getEmagProduct()->getCategoryId()) {
+                        && $childEmagProduct->getCategoryId() != $this->getEmagProduct()->getCategoryId()
+                    ) {
                         throw new Innobyte_EmagMarketplace_Exception(
                             'Associated product \'s category does not match parent configurable product \'s category'
                         );
@@ -191,18 +184,18 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         }
         return $returnValue;
     }
-    
-    
+
+
     /**
      * Handle offer saving.
-     * 
+     *
      * @return array
      * @throws Innobyte_EmagMarketplace_Exception
      */
     public function _getOfferSavingData()
     {
         $returnValue = array();
-        
+
         // for configurable send all child products
         $mageProduct = $this->getEmagProduct()->getMagentoProduct();
         if (!is_null($mageProduct) && $mageProduct->isConfigurable()) {
@@ -221,12 +214,13 @@ class Innobyte_EmagMarketplace_Model_Api_Product
                 );
                 try {
                     if ($childEmagProduct->getId()
-                        && $childEmagProduct->getCategoryId() != $this->getEmagProduct()->getCategoryId()) {
+                        && $childEmagProduct->getCategoryId() != $this->getEmagProduct()->getCategoryId()
+                    ) {
                         throw new Innobyte_EmagMarketplace_Exception(
                             'Associated product \'s category does not match parent configurable product \'s category'
                         );
                     }
-                    
+
                     $returnValue[] = $this->_computeApiOfferData(
                         $childEmagProduct
                     );
@@ -249,9 +243,8 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         }
         return $returnValue;
     }
-    
-    
-    
+
+
     /**
      * Compute api data to be sent to api (product description & offer).
      *
@@ -278,28 +271,32 @@ class Innobyte_EmagMarketplace_Model_Api_Product
                 );
             }
         }
-        
+
+        /** @var $mageProduct Mage_Catalog_Model_Product */
         $mageProduct = $emagProduct->getMagentoProduct();
         $returnValue = array(
-            'id' => (int) $mageProduct->getId(),
+            'id' => (int)$mageProduct->getId(),
         );
+
+        if (!$emagProduct->getName()) {
+            throw new Innobyte_EmagMarketplace_Exception(
+                'No eMAG product name.'
+            );
+        }
+        $returnValue['name'] = $emagProduct->getName();
+        if (!$emagProduct->getBrand()) {
+            throw new Innobyte_EmagMarketplace_Exception(
+                'No eMAG product brand.'
+            );
+        }
+        $returnValue['brand'] = $emagProduct->getBrand();
+
         if ($emagProduct->getPartNumberKey()) {
             $returnValue['part_number_key'] = $emagProduct->getPartNumberKey();
         } else {
-            if (!$emagProduct->getName()) {
-                throw new Innobyte_EmagMarketplace_Exception(
-                    'No eMAG product name.'
-                );
-            }
-            $returnValue['name'] = $emagProduct->getName();
-            if (!$emagProduct->getBrand()) {
-                throw new Innobyte_EmagMarketplace_Exception(
-                    'No eMAG product brand.'
-                );
-            }
-            $returnValue['brand'] = $emagProduct->getBrand();
             if (!$emagProduct->getCategoryId()
-                || !$emagProduct->getCategory()) {
+                || !$emagProduct->getCategory()
+            ) {
                 throw new Innobyte_EmagMarketplace_Exception(
                     'No eMAG category id.'
                 );
@@ -314,7 +311,8 @@ class Innobyte_EmagMarketplace_Model_Api_Product
             foreach ($emagProduct->getCategory()->getCharacteristics() as $char) {
                 $key = 'category_characteristic' . $char->getId();
                 if (!array_key_exists($key, $emagProduct->getData())
-                    || !strlen($emagProduct->getData($key))) {
+                    || !strlen($emagProduct->getData($key))
+                ) {
                     throw new Innobyte_EmagMarketplace_Exception(
                         Mage::helper('innobyte_emag_marketplace')->__(
                             'No category characteristic "%s" value found.',
@@ -322,28 +320,34 @@ class Innobyte_EmagMarketplace_Model_Api_Product
                         )
                     );
                 }
-                $characteristics[] = array(
-                    'id' => $char->getEmagId(),
-                    'value' => strval($emagProduct->getData($key)),
-                );
+
+                $options = explode('|', $emagProduct->getData($key));
+                foreach($options as $option) {
+                    $characteristics[] = array(
+                        'id' => $char->getEmagId(),
+                        'value' => strval($option),
+                    );
+                }
             }
+
             $returnValue['characteristics'] = $characteristics;
-                        
+
             if (!is_null($parentProduct)) {
                 if ($parentProduct->getFamilyTypeId() < 1
-                    || $parentProduct->getFamilyType()->getEmagId() < 1) {
+                    || $parentProduct->getFamilyType()->getEmagId() < 1
+                ) {
                     throw new Innobyte_EmagMarketplace_Exception(
                         'No family type found.'
                     );
                 }
                 $returnValue['family'] = array(
-                    'id' => (int) $parentProduct->getId(),
+                    'id' => (int)$parentProduct->getId(),
                     'name' => $parentProduct->getName(),
-                    'family_type_id' => (int) $parentProduct->getFamilyType()
+                    'family_type_id' => (int)$parentProduct->getFamilyType()
                         ->getEmagId()
                 );
             }
-                        
+
             $returnValue['part_number'] = $mageProduct->getSku();
         }
         if (!$mageProduct->getProductUrl()) {
@@ -353,16 +357,17 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         }
         $returnValue['url'] = $mageProduct->getProductUrl();
         if ($mageProduct->getWeight()) {
-            $returnValue['weight'] = (float) $mageProduct->getWeight();
+            $returnValue['weight'] = (float)$mageProduct->getWeight();
         }
         if ($emagProduct->getDescription()) {
             $returnValue['description'] = $emagProduct->getDescription();
         }
         if (is_array($emagProduct->getBarcodes())
-            && count($emagProduct->getBarcodes())) {
+            && count($emagProduct->getBarcodes())
+        ) {
             $returnValue['barcode'] = $emagProduct->getBarcodes();
         }
-        
+
         if (isset($_SERVER['INNO_EMAG_MKTP_LOCAL'])) {
             // local / not public server => use hardcoded image
             $images = array(
@@ -373,38 +378,37 @@ class Innobyte_EmagMarketplace_Model_Api_Product
             );
         } else {
             $images = array();
+            /** @var $imageHelper Mage_Catalog_Helper_Image */
             $imageHelper = Mage::helper('catalog/image');
-            if ($mageProduct->getImage()
-                && $mageProduct->getImage() != 'no_selection')
-            {
+            if ($mageProduct->getImage() && $mageProduct->getImage() != 'no_selection') {
                 $images[] = array(
                     'display_type' => Innobyte_EmagMarketplace_Model_Product::IMAGE_DISPLAY_TYPE_MAIN,
-                    'url' => (string) $imageHelper->init($mageProduct, 'image'),
+                    'url' => (string)$this->_getImagePath($mageProduct->getImage())
                 );
             }
             if (count($mageProduct->getMediaGalleryImages())) {
                 foreach ($mageProduct->getMediaGalleryImages() as $image) {
+                    // skip images that are identical to main image
+                    if ($this->_getImagePath($mageProduct->getImage()) == $this->_getImagePath($image->getFile())) {
+                        continue;
+                    }
                     $images[] = array(
                         'display_type' => Innobyte_EmagMarketplace_Model_Product::IMAGE_DISPLAY_TYPE_SECONDARY,
-                        'url' => (string) $imageHelper->init(
-                            $mageProduct,
-                            'image',
-                            $image->getFile()
-                        ),
+                        'url' => (string)$this->_getImagePath($image->getFile())
                     );
                 }
             }
-        }        
-        
+        }
+
         if (count($images)) {
             $returnValue['images'] = $images;
         }
-        
+
         $returnValue = array_merge(
             $returnValue,
             $this->_computeApiOfferData($emagProduct)
         );
-        
+
         // dispatch event in case customizations needs to be done by clients
         $returnValueObj = new Varien_Object($returnValue);
         Mage::dispatchEvent(
@@ -415,12 +419,21 @@ class Innobyte_EmagMarketplace_Model_Api_Product
                 'offer_data' => $returnValueObj,
             )
         );
-        
+
         return $returnValueObj->toArray();
     }
-    
-    
-    
+
+    /**
+     * Get non-cached image path
+     *
+     * @param $filename
+     * @return string
+     */
+    protected function _getImagePath($filename)
+    {
+        return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) . 'catalog/product' . $filename;
+    }
+
     /**
      * Compute offer api data to be sent to api.
      *
@@ -475,9 +488,9 @@ class Innobyte_EmagMarketplace_Model_Api_Product
             ),
             'warranty' => intval($emagProduct->getWarranty())
         );
-        
+
         $helper = Mage::helper('innobyte_emag_marketplace');
-        
+
         // attach availability info
         $returnValue['availability'] = array(
             array('warehouse_id' => self::DEFAULT_WHAREHOUSE_ID)
@@ -486,16 +499,18 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         if ($mageProduct->isAvailable()) {
             $returnValue['availability'][0]['id'] = Innobyte_EmagMarketplace_Model_Product::AVAILABILITY_IN_STOCK;
             if ($helper->isLimitedStockEnabled($emagProduct->getStoreId())
-                && $stockQty <= $helper->getLimitedStockLimit($emagProduct->getStoreId())) {
+                && $stockQty <= $helper->getLimitedStockLimit($emagProduct->getStoreId())
+            ) {
                 $returnValue['availability'][0]['id'] = Innobyte_EmagMarketplace_Model_Product::AVAILABILITY_LIMITED_STOCK;
             }
         } else {
             $returnValue['availability'][0]['id'] = Innobyte_EmagMarketplace_Model_Product::AVAILABILITY_OUT_OF_STOCK;
         }
-        
+
         // attach stock info
         if ($helper->sendStockQty($emagProduct->getStoreId())
-            && $stockQty >= 0 && $stockQty < 65535) {
+            && $stockQty >= 0 && $stockQty < 65535
+        ) {
             $returnValue['stock'] = array(
                 array(
                     'warehouse_id' => self::DEFAULT_WHAREHOUSE_ID,
@@ -503,7 +518,7 @@ class Innobyte_EmagMarketplace_Model_Api_Product
                 ),
             );
         }
-        
+
         // attach offer start date
         if ($emagProduct->getStartDate()) {
             try {
@@ -518,36 +533,73 @@ class Innobyte_EmagMarketplace_Model_Api_Product
             }
             $now = new Zend_Date(null, Varien_Date::DATE_INTERNAL_FORMAT);
             if (!$zendDate->isLater($now)
-                || !$zendDate->isEarlier($now->addDay(61))) {
+                || !$zendDate->isEarlier($now->addDay(61))
+            ) {
                 throw new Innobyte_EmagMarketplace_Exception(
                     'Offer start date can be as far as 60 days in the future and cannot be earlier than tomorrow.'
                 );
             }
             $returnValue['start_date'] = $zendDate->toString(Varien_Date::DATE_INTERNAL_FORMAT);
         }
-        
+
+
         // attach prices
-        $taxHelper = Mage::helper('tax');
-        $price = $taxHelper->getPrice(
-            $mageProduct,
-            $mageProduct->getPrice(),
-            false
-        );
-        $finalPrice = $taxHelper->getPrice(
-            $mageProduct,
-            $mageProduct->getFinalPrice(),
-            false
-        );
         $store = $mageProduct->getStore();
-        $price = $store->roundPrice($store->convertPrice($price, 0, 0));
-        $finalPrice = $store->roundPrice($store->convertPrice($finalPrice, 0, 0));
-        if ($finalPrice < $price) {
-            $returnValue['sale_price'] = $finalPrice;
-            $returnValue['recommended_price'] = $price;
+
+        /** @var $taxHelper Mage_Tax_Helper_Data */
+        $taxHelper = Mage::helper('tax');
+
+        // get magento product price if eMAG price is not available
+        if (!is_null($emagProduct->getPrice())) {
+            $productPrice = (float)$emagProduct->getPrice();
+            $finalPrice = $productPrice;
         } else {
-            $returnValue['sale_price'] = $finalPrice;
+            $productPrice = (float)$mageProduct->getPrice();
+            $finalPrice = (float)$mageProduct->getFinalPrice();
         }
-        
+        $priceExclTax = $taxHelper->getPrice(
+            $mageProduct,
+            $productPrice,
+            false
+        );
+        $finalPriceExclTax = $taxHelper->getPrice(
+            $mageProduct,
+            $finalPrice,
+            false
+        );
+
+        // get magento product final price if eMAG special price is not available
+        if (!is_null($emagProduct->getSpecialPrice())) {
+            $productSpecialPrice = (float)$emagProduct->getSpecialPrice();
+        } else {
+            // if eMAG price is available force usage of eMAG special price else use magento final price
+            if (!is_null($emagProduct->getPrice())) {
+                $productSpecialPrice = (float)$emagProduct->getPrice();
+            } else {
+                $productSpecialPrice = (float)$mageProduct->getFinalPrice();
+            }
+        }
+        $specialPriceExclTax = $taxHelper->getPrice(
+            $mageProduct,
+            $productSpecialPrice,
+            false
+        );
+
+        $recommendedPrice = $store->roundPrice($store->convertPrice($priceExclTax, 0, 0));
+        $finalPrice = $store->roundPrice($store->convertPrice($finalPriceExclTax, 0, 0));
+        $salePrice = $store->roundPrice($store->convertPrice($specialPriceExclTax, 0, 0));
+
+        if ($salePrice < $recommendedPrice) {
+            $returnValue['sale_price'] = $salePrice;
+            $returnValue['recommended_price'] = $recommendedPrice;
+        } else {
+            // if eMAG product price is not available use Magento final price
+            if (is_null($emagProduct->getPrice())) {
+                $salePrice = $finalPrice;
+            }
+            $returnValue['sale_price'] = $salePrice;
+        }
+
         // dispatch event in case customizations needs to be done by clients
         $returnValueObj = new Varien_Object($returnValue);
         Mage::dispatchEvent(
@@ -557,12 +609,11 @@ class Innobyte_EmagMarketplace_Model_Api_Product
                 'offer_data' => $returnValueObj,
             )
         );
-        
+
         return $returnValueObj->toArray();
     }
-    
-    
-    
+
+
     /**
      * Setter method for emag product.
      *
@@ -580,9 +631,8 @@ class Innobyte_EmagMarketplace_Model_Api_Product
         $this->_emagProduct = $product;
         return $this;
     }
-    
-    
-    
+
+
     /**
      * Getter method for emag product.
      *

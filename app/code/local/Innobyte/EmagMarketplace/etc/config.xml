@@ -1,7 +1,7 @@
 <config>
     <modules>
         <Innobyte_EmagMarketplace>
-            <version>1.0.4</version>
+            <version>1.1.13</version>
         </Innobyte_EmagMarketplace>
     </modules>
     <global>
@@ -106,6 +106,15 @@
                     <use>core_setup</use>
                 </connection>
             </innobyte_emag_marketplace_setup>
+            <innobyte_emag_marketplace_product_setup>
+                <setup>
+                    <module>Innobyte_EmagMarketplace</module>
+                    <class>Mage_Catalog_Model_Resource_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </innobyte_emag_marketplace_product_setup>
             <innobyte_emag_marketplace_write>
                 <connection>
                     <use>core_write</use>
@@ -249,6 +258,24 @@
                     </innobyte_emag_marketplace>
                 </observers>
             </sales_order_creditmemo_load_after>
+
+            <!--SALES ENTITY BEFORE SAVE-->
+            <sales_order_invoice_save_before>
+                <observers>
+                    <innobyte_emag_marketplace>
+                        <class>innobyte_emag_marketplace/sales_observer</class>
+                        <method>invoiceBeforeSave</method>
+                    </innobyte_emag_marketplace>
+                </observers>
+            </sales_order_invoice_save_before>
+            <sales_order_creditmemo_save_before>
+                <observers>
+                    <innobyte_emag_marketplace>
+                        <class>innobyte_emag_marketplace/sales_observer</class>
+                        <method>creditmemoBeforeSave</method>
+                    </innobyte_emag_marketplace>
+                </observers>
+            </sales_order_creditmemo_save_before>
 
             <!--ENTITY ADDRESS AFTER SAVE-->
             <sales_quote_address_save_after>
@@ -463,6 +490,47 @@
                     </innobyte_emag_marketplace>
                 </observers>
             </adminhtml_sales_order_create_process_data_before>
+
+            <!--ADD eMAG ORDER ID COLUMN TO SALES ORDER GRID-->
+            <sales_order_grid_collection_load_before>
+                <observers>
+                    <innobyte_emag_marketplace>
+                        <model>innobyte_emag_marketplace/sales_observer</model>
+                        <method>addGridColumnsToSelect</method>
+                    </innobyte_emag_marketplace>
+                </observers>
+            </sales_order_grid_collection_load_before>
+            <!--END ADD eMAG ORDER ID COLUMN TO SALES ORDER GRID-->
+
+            <!--ADD eMAG mass actions TO SALES ORDER GRID-->
+            <core_block_abstract_prepare_layout_before>
+                <observers>
+                    <innobyte_emag_marketplace_order_massactions>
+                        <class>innobyte_emag_marketplace/sales_observer</class>
+                        <method>addOrderMassActions</method>
+                    </innobyte_emag_marketplace_order_massactions>
+                </observers>
+            </core_block_abstract_prepare_layout_before>
+            <!--END ADD eMAG mass actions TO SALES ORDER GRID-->
+
+            <!--ADD eMAG is_synced COLUMN TO PRODUCT GRID-->
+            <core_block_abstract_prepare_layout_before>
+                <observers>
+                    <innobyte_emag_marketplace>
+                        <class>innobyte_emag_marketplace/catalog_product_observer</class>
+                        <method>addGridColumns</method>
+                    </innobyte_emag_marketplace>
+                </observers>
+            </core_block_abstract_prepare_layout_before>
+            <catalog_product_collection_load_before>
+                <observers>
+                    <innobyte_emag_marketplace>
+                        <class>innobyte_emag_marketplace/catalog_product_observer</class>
+                        <method>addGridColumnsToSelect</method>
+                    </innobyte_emag_marketplace>
+                </observers>
+            </catalog_product_collection_load_before>
+            <!--END ADD eMAG is_synced COLUMN TO PRODUCT GRID-->
         </events>
         <layout>
             <updates>
@@ -550,11 +618,15 @@
 
         <Innobyte_EmagMarketplace>
             <general_settings>
+                <domain>emag.ro</domain>
                 <template>Innobyte_EmagMarketplace_general_settings_template</template>
             </general_settings>
             <api_settings>
                 <password backend_model="adminhtml/system_config_backend_encrypted"/>
             </api_settings>
+            <invoice_creditmemo_settings>
+                <use_third_party_invoices>0</use_third_party_invoices>
+            </invoice_creditmemo_settings>
         </Innobyte_EmagMarketplace>
 
         <!-- api call settings, can be overridden easely in modules that <depends> on this one -->

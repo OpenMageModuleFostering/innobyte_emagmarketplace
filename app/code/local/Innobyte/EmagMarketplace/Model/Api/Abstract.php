@@ -282,11 +282,11 @@ abstract class Innobyte_EmagMarketplace_Model_Api_Abstract
     protected function getResourceActionApiUrl()
     {
         $url = $this->getHelper()->getApiUrl($this->getStoreId())
-            . DS . $this->getResourceName() . DS . $this->getActionName();
+            . '/' . $this->getResourceName() . '/' . $this->getActionName();
 
         $orderId = $this->getEmagOrderId();
         if ($orderId) {
-            $url .= DS . $orderId;
+            $url .= '/' . $orderId;
         }
 
         return $url;
@@ -405,8 +405,12 @@ abstract class Innobyte_EmagMarketplace_Model_Api_Abstract
         $config = array(
             'adapter' => $this->getHelper()->getMakeHttpCallAdapter(),
             'timeout' => $this->getHelper()->getMakeHttpCallTimeout(),
+            'curloptions' => array(
+                CURLOPT_SSL_VERIFYPEER => !$this->getHelper()->isSslVerifyDisabled($this->getHelper()->getCurrStoreId()),
+                CURLOPT_VERBOSE => $this->getHelper()->isVerboseMode($this->getHelper()->getCurrStoreId())
+            )
         );
-        
+
         $webClient = new Zend_Http_Client();
         $webClient->setUri($url)
                   ->setConfig($config)

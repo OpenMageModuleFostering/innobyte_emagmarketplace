@@ -139,7 +139,6 @@ class Innobyte_EmagMarketplace_Model_Cron extends Mage_Core_Model_Abstract
                             )
                         );
 
-
                     /** @var $response Innobyte_EmagMarketplace_Model_Api_Response */
                     $response = $api->count();
 

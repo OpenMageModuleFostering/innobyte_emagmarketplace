@@ -343,8 +343,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Magento
             $this->_prepareShippingAddress();
             $this->_prepareShipping();
             $this->_prepareProducts();
-            //TODO: uncomment if magento native invoices need to be sent to eMAG
-            //$this->_prepareInvoices();
+            $this->_prepareInvoices();
             $this->_prepareVouchers();
             $this->_preparePayment();
             $this->_prepareCustomerComment();
@@ -393,7 +392,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Magento
             $orderDate = $this->getOrder()->getEmagOrderDate();
             $orderStatus = $this->getOrderStatus();
 
-            if (!$orderStatus) {
+            if ($orderStatus === false) {
                 throw new Innobyte_EmagMarketplace_Exception(
                     $this->getHelper()->__(
                         'Invalid Magento order status: %s', $this->getOrder()->getStatus()
@@ -502,7 +501,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Magento
         $product = array(
             'product_id' => $item->getProductId(),
             'part_number' => $item->getSku(),
-            'quantity' => $item->getQtyOrdered(),
+            'quantity' => $item->getQtyOrdered() - $item->getQtyRefunded(),
             'sale_price' => $item->getPrice,
             'currency' => $this->getCurrency()->getCode(),
             'created' => $item->getEmagCreated(),
@@ -705,6 +704,11 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Magento
      */
     protected function _prepareInvoices()
     {
+        // exit if third party invoices should be used
+        if ($this->getHelper()->useThirdPartyInvoices($this->getStoreId())) {
+            return $this;
+        }
+
         try {
             $invoices = $this->getOrder()->getInvoiceCollection();
             foreach ($invoices as $invoice) {
@@ -740,10 +744,10 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Magento
     private function _processInvoice($entity, $storno = false)
     {
         $type = Innobyte_EmagMarketplace_Model_Sales_Invoice::EMAG_INVOICE_NORMAL;
-        $entityType = Mage_Sales_Model_Order::ACTION_FLAG_INVOICE;
+        $entityType = Innobyte_EmagMarketplace_Model_Sales_Invoice::ENTITY_TYPE_CODE_INVOICE;
         if ($storno) {
             $type = Innobyte_EmagMarketplace_Model_Sales_Invoice::EMAG_INVOICE_STORNO;
-            $entityType = Mage_Sales_Model_Order::ACTION_FLAG_CREDITMEMO;
+            $entityType = Innobyte_EmagMarketplace_Model_Sales_Invoice::ENTITY_TYPE_CODE_INVOICE;
         }
 
         // get entity prefix(series)
@@ -820,37 +824,39 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Magento
     {
         $attachments = array();
         try {
-            $thirdPartyInvoices = $this->_getThirdPartyInvoices();
-            foreach ($thirdPartyInvoices as $invoice) {
-                $attachments[] = array(
-                    'name' => $invoice->getEmagInvoiceName(),
-                    'url' => $this->_getFileUrl($invoice->getId(), Innobyte_EmagMarketplace_Model_Sales_Invoice::THIRD_PARTY_INVOICE),
-                    'type' => 1
-                );
-            }
+            // check if third party or magento invoices should be used
+            if ($this->getHelper()->useThirdPartyInvoices($this->getStoreId())) {
+                $thirdPartyInvoices = $this->_getThirdPartyInvoices();
+                foreach ($thirdPartyInvoices as $invoice) {
+                    $attachments[] = array(
+                        'name' => $invoice->getEmagInvoiceName(),
+                        'url' => $this->_getFileUrl($invoice->getId(), Innobyte_EmagMarketplace_Model_Sales_Invoice::THIRD_PARTY_INVOICE),
+                        'type' => 1
+                    );
+                }
+            } else {
+                $magentoInvoices = $this->_getMagentoInvoices();
+                foreach ($magentoInvoices as $invoice) {
+                    $this->_generateInvoice($invoice);
 
-//TODO: uncomment if magento native invoices need to be sent to eMAG
-//            $magentoInvoices = $this->_getMagentoInvoices();
-//            foreach ($magentoInvoices as $invoice) {
-//                $this->_generateInvoice($invoice);
-//
-//                $attachments[] = array(
-//                    'name' => $this->getInvoiceFileName($invoice, Mage_Sales_Model_Order::ACTION_FLAG_INVOICE),
-//                    'url' => $this->_getFileUrl($invoice->getId(), Mage_Sales_Model_Order::ACTION_FLAG_INVOICE),
-//                    'type' => 1
-//                );
-//            }
-//
-//            $magentoCreditmemos = $this->_getMagentoCreditmemos();
-//            foreach ($magentoCreditmemos as $creditmemo) {
-//                $this->_generateCreditmemo($creditmemo);
-//
-//                $attachments[] = array(
-//                    'name' => $this->getInvoiceFileName($creditmemo, Mage_Sales_Model_Order::ACTION_FLAG_CREDITMEMO),
-//                    'url' => $this->_getFileUrl($creditmemo->getId(), Mage_Sales_Model_Order::ACTION_FLAG_CREDITMEMO),
-//                    'type' => 1
-//                );
-//            }
+                    $attachments[] = array(
+                        'name' => $this->getInvoiceFileName($invoice, Mage_Sales_Model_Order::ACTION_FLAG_INVOICE),
+                        'url' => $this->_getFileUrl($invoice->getId(), Mage_Sales_Model_Order::ACTION_FLAG_INVOICE),
+                        'type' => 1
+                    );
+                }
+
+                $magentoCreditmemos = $this->_getMagentoCreditmemos();
+                foreach ($magentoCreditmemos as $creditmemo) {
+                    $this->_generateCreditmemo($creditmemo);
+
+                    $attachments[] = array(
+                        'name' => $this->getInvoiceFileName($creditmemo, Mage_Sales_Model_Order::ACTION_FLAG_CREDITMEMO),
+                        'url' => $this->_getFileUrl($creditmemo->getId(), Mage_Sales_Model_Order::ACTION_FLAG_CREDITMEMO),
+                        'type' => 1
+                    );
+                }
+            }
 
             $this->getEmagOrder()
                 ->setAttachments($attachments);

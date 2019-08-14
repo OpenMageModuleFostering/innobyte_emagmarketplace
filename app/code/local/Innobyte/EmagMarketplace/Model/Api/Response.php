@@ -1,4 +1,5 @@
 <?php
+
 /**
  * eMAG api respose.
  *
@@ -6,7 +7,6 @@
  * @package  Innobyte_EmagMarketplace
  * @author   Bogdan Constantinescu <bogdan.constantinescu@innobyte.com>
  */
-
 class Innobyte_EmagMarketplace_Model_Api_Response
 {
     /**
@@ -29,9 +29,8 @@ class Innobyte_EmagMarketplace_Model_Api_Response
      * @var array|int
      */
     protected $_results;
-    
-    
-    
+
+
     /**
      * Constructor. initializes sttuffs.
      *
@@ -62,11 +61,12 @@ class Innobyte_EmagMarketplace_Model_Api_Response
                 'Invalid api response format. "results" is missing.'
             );
         }
-        if (!is_array($apiResponse['results'])
-            && !is_numeric($apiResponse['results'])) {
-            throw new Innobyte_EmagMarketplace_Exception(
-                'Invalid api response format. "results" has invalid format.'
-            );
+        if (!is_array($apiResponse['results'])) {
+            if (!is_numeric($apiResponse['results']) && !is_bool($apiResponse['results'])) {
+                throw new Innobyte_EmagMarketplace_Exception(
+                    'Invalid api response format. "results" has invalid format.'
+                );
+            }
         }
         $this->_isError = (bool)$apiResponse['isError'];
         $this->_messages = $apiResponse['messages'];

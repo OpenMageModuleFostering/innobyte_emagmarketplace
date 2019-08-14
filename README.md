@@ -206,3 +206,10 @@ New payment methods added for eMAG(visible only in admin):
 ### 6. Install
 - Copy files / folders (design/skin files should be put in the default theme of your current package)
 - Refresh your cache, log out from admin and log back in.
+
+
+### CHANGE LOG
+- 1.0.1 - Cron config bug fix
+- 1.0.2 - Added status filter to order synchronizing cron
+- 1.0.3 - Fix for eMAG order field checks while synchronizing
+- 1.0.4 - Product synchronization - commission type bug fix

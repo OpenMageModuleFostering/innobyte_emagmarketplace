@@ -131,7 +131,14 @@ class Innobyte_EmagMarketplace_Model_Cron extends Mage_Core_Model_Abstract
                         true
                     );
 
-                    $api = $this->getOrderApiModel()->setStoreId($store->getId());
+                    $api = $this->getOrderApiModel()
+                        ->setStoreId($store->getId())
+                        ->setData(
+                            array(
+                                'status' => Innobyte_EmagMarketplace_Model_Order_Convert_Abstract::EMAG_STATUS_NEW
+                            )
+                        );
+
 
                     /** @var $response Innobyte_EmagMarketplace_Model_Api_Response */
                     $response = $api->count();
@@ -154,6 +161,11 @@ class Innobyte_EmagMarketplace_Model_Cron extends Mage_Core_Model_Abstract
                         $response = $this->getOrderApiModel()
                             ->setStoreId($store->getId())
                             ->setCurrentPage($currentPage)
+                            ->setData(
+                                array(
+                                    'status' => Innobyte_EmagMarketplace_Model_Order_Convert_Abstract::EMAG_STATUS_NEW
+                                )
+                            )
                             ->read();
 
                         if (!$this->_processEmagOrders($store, $response)) {

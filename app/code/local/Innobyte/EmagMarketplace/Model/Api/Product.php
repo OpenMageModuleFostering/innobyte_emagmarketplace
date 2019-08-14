@@ -470,12 +470,10 @@ class Innobyte_EmagMarketplace_Model_Api_Product
                 ),
             ),
             'commission' => array(
-                array(
-                    'type' => $commissionType,
-                    'value' => $emagProduct->getCommissionValue(),
-                ),
+                'type' => $commissionType,
+                'value' => $emagProduct->getCommissionValue(),
             ),
-            'warranty' => intval($emagProduct->getWarranty()),
+            'warranty' => intval($emagProduct->getWarranty())
         );
         
         $helper = Mage::helper('innobyte_emag_marketplace');

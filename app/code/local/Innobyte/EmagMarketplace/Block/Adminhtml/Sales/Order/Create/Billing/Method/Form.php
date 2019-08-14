@@ -28,7 +28,7 @@ class Innobyte_EmagMarketplace_Block_Adminhtml_Sales_Order_Create_Billing_Method
             foreach ($methods as $key => $method) {
                 if (
                     (!$this->getQuote()->getEmagOrderId() && strpos($method->getCode(), 'emag') !== false)
-                    || $method->getCode() == 'emag_unknown'
+                    || $method->getCode() == Innobyte_EmagMarketplace_Model_Payment_Method_Unknown::EMAG_UNKNOWN
                 ) {
                     unset($methods[$key]);
                 } elseif ($this->getQuote()->getEmagOrderId() && strpos($method->getCode(), 'emag') === false) {

@@ -96,7 +96,7 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
     public function getEmagOrder($key = null)
     {
         if ($key) {
-            if (!isset($this->_emagOrder[$key])) {
+            if (!array_key_exists($key, $this->_emagOrder)) {
                 throw new Innobyte_EmagMarketplace_Exception(
                     $this->getHelper()->__(
                         'Order property "%s" not found!', $key
@@ -218,7 +218,6 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
             $transaction->addCommitCallback(array($order, 'save'));
             $transaction->save();
 
-            //TODO: uncomment below line in final version; used to acknowledge order
             $this->acknowledgeEmagOrder($this->getOrder());
 
         } catch (Innobyte_EmagMarketplace_Exception $e) {
@@ -615,9 +614,9 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
 
         $grandTotal = $this->getOrder()->getGrandTotal() + $shippingAmount;
         $baseGrandTotal = $this->getOrder()->getBaseGrandTotal() + $baseShippingAmount;
-        
+
         $rateResult = Mage::getModel('innobyte_emag_marketplace/shipping_carrier_emag')
-            ->collectRates(null);        
+            ->collectRates(null);
         if (is_object($rateResult)) {
             $rate = current($rateResult->getAllRates());
         }

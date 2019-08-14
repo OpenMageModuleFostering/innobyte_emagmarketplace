@@ -1,7 +1,7 @@
 <config>
     <modules>
         <Innobyte_EmagMarketplace>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </Innobyte_EmagMarketplace>
     </modules>
     <global>
@@ -499,7 +499,7 @@
                     <cron_expr>*/5 * * * *</cron_expr>
                 </schedule>
                 <run>
-                    <model>innobyte_emag_marketplace/cron::someMethod</model>
+                    <model>innobyte_emag_marketplace/cron::readOrders</model>
                 </run>
             </innobyte_emag_marketplace_cron>
         </jobs>

@@ -272,8 +272,9 @@
 "Invalid family type provided.","Invalid family type provided."
 "Associated product 's category does not match parent configurable product 's category","Associated product 's category does not match parent configurable product 's category"
 "General Information","General Information"
-"Name","Name"
+"Add New","Add New"
 "Should be consistent with eMAG Product Documentation Standard.","Should be consistent with eMAG Product Documentation Standard."
 "Should be consistent with eMAG Product Documentation Standard. Can contain basic HTML tags.","Should be consistent with eMAG Product Documentation Standard. Can contain basic HTML tags."
 "Product Offer","Product Offer"
-
+"percentage","percentage"
+"absolute","absolute"

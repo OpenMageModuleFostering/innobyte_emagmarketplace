@@ -49,7 +49,8 @@ inno.emagMarketplace.packaging = Class.create(Packaging, {
                     return this.validateElement(element);
                 },
                 this
-            );
+            )
+            .all();
         blnResult = blnResult && blnInnoFieldsResult;
         // end Innobyte customization - validate extra inno emag inputs
         return blnResult;

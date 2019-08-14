@@ -616,8 +616,11 @@ class Innobyte_EmagMarketplace_Model_Order_Convert_Emag
         $grandTotal = $this->getOrder()->getGrandTotal() + $shippingAmount;
         $baseGrandTotal = $this->getOrder()->getBaseGrandTotal() + $baseShippingAmount;
         
-        $rate = Mage::getModel('innobyte_emag_marketplace/shipping_carrier')
-            ->collectRates(null);
+        $rateResult = Mage::getModel('innobyte_emag_marketplace/shipping_carrier_emag')
+            ->collectRates(null);        
+        if (is_object($rateResult)) {
+            $rate = current($rateResult->getAllRates());
+        }
         $this->getOrder()
             ->setShippingMethod($rate->getCarrier() . '_' . $rate->getMethod())
             ->setShippingAmount($shippingAmount)

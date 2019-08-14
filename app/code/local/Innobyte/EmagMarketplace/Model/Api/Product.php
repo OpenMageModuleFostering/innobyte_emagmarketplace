@@ -362,35 +362,40 @@ class Innobyte_EmagMarketplace_Model_Api_Product
             && count($emagProduct->getBarcodes())) {
             $returnValue['barcode'] = $emagProduct->getBarcodes();
         }
-        // TODO uncomment bellow lines and remove hardcoded product when development is done.
-//        $images = array();
-//        $imageHelper = Mage::helper('catalog/image');
-//        if ($mageProduct->getImage()
-//            && $mageProduct->getImage() != 'no_selection')
-//        {
-//            $images[] = array(
-//                'display_type' => Innobyte_EmagMarketplace_Model_Product::IMAGE_DISPLAY_TYPE_MAIN,
-//                'url' => (string) $imageHelper->init($mageProduct, 'image'),
-//            );
-//        }
-//        if (count($mageProduct->getMediaGalleryImages())) {
-//            foreach ($mageProduct->getMediaGalleryImages() as $image) {
-//                $images[] = array(
-//                    'display_type' => Innobyte_EmagMarketplace_Model_Product::IMAGE_DISPLAY_TYPE_SECONDARY,
-//                    'url' => (string) $imageHelper->init(
-//                        $mageProduct,
-//                        'image',
-//                        $image->getFile()
-//                    ),
-//                );
-//            }
-//        }
-        $images = array(
-            array(
-                'display_type' => Innobyte_EmagMarketplace_Model_Product::IMAGE_DISPLAY_TYPE_MAIN,
-                'url' => 'http://s1emagst.akamaized.net/layout/ro/images/logo//19/28252.png',
-            )
-        );
+        
+        if (isset($_SERVER['INNO_EMAG_MKTP_LOCAL'])) {
+            // local / not public server => use hardcoded image
+            $images = array(
+                array(
+                    'display_type' => Innobyte_EmagMarketplace_Model_Product::IMAGE_DISPLAY_TYPE_MAIN,
+                    'url' => 'http://s1emagst.akamaized.net/layout/ro/images/logo//19/28252.png',
+                )
+            );
+        } else {
+            $images = array();
+            $imageHelper = Mage::helper('catalog/image');
+            if ($mageProduct->getImage()
+                && $mageProduct->getImage() != 'no_selection')
+            {
+                $images[] = array(
+                    'display_type' => Innobyte_EmagMarketplace_Model_Product::IMAGE_DISPLAY_TYPE_MAIN,
+                    'url' => (string) $imageHelper->init($mageProduct, 'image'),
+                );
+            }
+            if (count($mageProduct->getMediaGalleryImages())) {
+                foreach ($mageProduct->getMediaGalleryImages() as $image) {
+                    $images[] = array(
+                        'display_type' => Innobyte_EmagMarketplace_Model_Product::IMAGE_DISPLAY_TYPE_SECONDARY,
+                        'url' => (string) $imageHelper->init(
+                            $mageProduct,
+                            'image',
+                            $image->getFile()
+                        ),
+                    );
+                }
+            }
+        }        
+        
         if (count($images)) {
             $returnValue['images'] = $images;
         }

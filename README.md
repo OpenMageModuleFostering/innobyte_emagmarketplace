@@ -23,7 +23,11 @@ eMAG Marketplace [1.0.0]
 
 
 ### 5. Technical specification
-API Integration documentation can be found in `docs/` folder.
+API Integration documentation can be found in `docs/` folder.  
+On local env / not public server in order to send a product set this variable INNO_EMAG_MKTP_LOCAL in order to use a public hardcoded image. On apache put this in vhost like below:  
+    
+    SetEnv INNO_EMAG_MKTP_LOCAL on
+
 ###### Rewrites
 - Models
     - *customer_form*: remove eMAG attributes from forms if emag_order_id is not available

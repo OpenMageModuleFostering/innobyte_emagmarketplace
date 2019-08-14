@@ -243,7 +243,7 @@ class Innobyte_EmagMarketplace_Adminhtml_Emag_LocalityController
         }
 
         $block = $this->getLayout()->createBlock('adminhtml/template')
-            ->setTemplate('innobyte/emag_marketplace/sales/order/emag_edit/city-autocomplete.phtml')
+            ->setTemplate('innobyte/emag_marketplace/city-autocomplete.phtml')
             ->assign('items', $items)
             ->assign('addressType', $addressType);
         $this->getResponse()->setBody($block->toHtml());

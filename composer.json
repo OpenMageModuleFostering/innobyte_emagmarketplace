@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/Innobyte_EmagMarketplace",
+    "name": "OpenMageModuleFostering\/Innobyte_EmagMarketplace",
     "type": "magento-module",
     "license": "Innobyte-License",
     "homepage": "",
-    "description": "Being the fastest growing  marketplace in Romania, Bulgaria and Hungary, eMAG Marketplace will bring your store’s sales to the next level by opening a new and efficient sales channel.",
+    "description": "Being the fastest growing  marketplace in Romania, Bulgaria and Hungary, eMAG Marketplace will bring your store\u2019s sales to the next level by opening a new and efficient sales channel.",
     "authors": [
-    {
-        "name": "Florin Mihai Savici",
-        "email": "management@innobyte.com"
-    }
-],
+        {
+            "name": "Florin Mihai Savici",
+            "email": "management@innobyte.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
